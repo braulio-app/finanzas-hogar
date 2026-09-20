@@ -54,6 +54,13 @@ function App() {
       maximumFractionDigits: 0,
     }).format(valor)
 
+  const formatoFecha = (fechaMovimiento) => {
+    if (!fechaMovimiento) return ''
+
+    const [anio, mes, dia] = fechaMovimiento.split('-')
+    return `${dia}/${mes}/${anio}`
+  }
+
   const agregarMovimiento = (e) => {
     e.preventDefault()
 
@@ -92,11 +99,13 @@ function App() {
             Organiza tu presupuesto y descubre en qué estás gastando.
           </p>
         </div>
+
         <div className="icono-hogar">🏠</div>
       </header>
 
       <section className="presupuesto">
         <label htmlFor="presupuesto">Presupuesto inicial</label>
+
         <div className="campo-presupuesto">
           <span>$</span>
           <input
@@ -136,7 +145,9 @@ function App() {
         <div className="barra">
           <div
             className="barra-interior"
-            style={{ width: `${Math.min(porcentajeDisponible, 100)}%` }}
+            style={{
+              width: `${Math.min(porcentajeDisponible, 100)}%`,
+            }}
           />
         </div>
       </section>
@@ -236,7 +247,7 @@ function App() {
                 <div className="movimiento-info">
                   <strong>{movimiento.nombre}</strong>
                   <span>
-                    {movimiento.categoria} · {movimiento.fecha}
+                    {movimiento.categoria} · {formatoFecha(movimiento.fecha)}
                   </span>
                 </div>
 
