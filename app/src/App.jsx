@@ -24,6 +24,21 @@ const categoriasIngreso = [
   'Otros',
 ]
 
+const coloresGrafico = [
+  '#28745b',
+  '#3ba77b',
+  '#6b9f8b',
+  '#c69a55',
+  '#7a8fb8',
+  '#b36f6f',
+  '#8b78ad',
+  '#58a6a6',
+  '#b18a5a',
+  '#7f9d63',
+  '#a86f8c',
+  '#7d8b86',
+]
+
 function leerJSON(clave, respaldo) {
   try {
     const valor = localStorage.getItem(clave)
@@ -35,6 +50,7 @@ function leerJSON(clave, respaldo) {
 
 function fechaLocal() {
   const ahora = new Date()
+
   const anio = ahora.getFullYear()
   const mes = String(ahora.getMonth() + 1).padStart(2, '0')
   const dia = String(ahora.getDate()).padStart(2, '0')
@@ -109,14 +125,12 @@ function agregarMesesHasta(lista, objetivo) {
 function generarCalendario(primerMes, cantidadMeses) {
   return Array.from(
     { length: cantidadMeses },
-    (_, indice) =>
-      moverMes(primerMes, indice)
+    (_, indice) => moverMes(primerMes, indice)
   )
 }
 
 function ultimoDiaDelMes(mes) {
-  const [anio, numeroMes] =
-    mes.split('-').map(Number)
+  const [anio, numeroMes] = mes.split('-').map(Number)
 
   const dia = new Date(
     anio,
@@ -138,11 +152,8 @@ function fechaParaMes(mes) {
 }
 
 function diferenciaMeses(desde, hasta) {
-  const [anio1, mes1] =
-    desde.split('-').map(Number)
-
-  const [anio2, mes2] =
-    hasta.split('-').map(Number)
+  const [anio1, mes1] = desde.split('-').map(Number)
+  const [anio2, mes2] = hasta.split('-').map(Number)
 
   return (
     (anio2 - anio1) * 12 +
@@ -153,14 +164,12 @@ function diferenciaMeses(desde, hasta) {
 function App() {
   const [modoOscuro, setModoOscuro] = useState(
     () =>
-      localStorage.getItem('modoOscuro') ===
-      'true'
+      localStorage.getItem('modoOscuro') === 'true'
   )
 
-  const [movimientos, setMovimientos] =
-    useState(() =>
-      leerJSON('movimientos', [])
-    )
+  const [movimientos, setMovimientos] = useState(
+    () => leerJSON('movimientos', [])
+  )
 
   const [meses, setMeses] = useState(() => {
     const nuevos = leerJSON(
@@ -187,8 +196,7 @@ function App() {
       ),
     ]
 
-    const encontrados =
-      completarMeses(lista)
+    const encontrados = completarMeses(lista)
 
     if (encontrados.length > 0) {
       return encontrados
@@ -227,8 +235,7 @@ function App() {
 
     const valorViejo = primerMes
       ? Number(
-          mesesViejos[primerMes]
-            ?.dineroInicial
+          mesesViejos[primerMes]?.dineroInicial
         ) || 0
       : 0
 
@@ -238,9 +245,7 @@ function App() {
 
     return (
       Number(
-        localStorage.getItem(
-          'presupuesto'
-        )
+        localStorage.getItem('presupuesto')
       ) || 0
     )
   })
@@ -258,9 +263,7 @@ function App() {
       localStorage.getItem(
         'finanzas_mes_seleccionado'
       ) ||
-      localStorage.getItem(
-        'mesSeleccionado'
-      )
+      localStorage.getItem('mesSeleccionado')
 
     if (
       guardado &&
@@ -270,9 +273,7 @@ function App() {
       return guardado
     }
 
-    return (
-      ordenarMeses(meses).at(-1) || ''
-    )
+    return ordenarMeses(meses).at(-1) || ''
   })
 
   const [seccion, setSeccion] =
@@ -324,9 +325,7 @@ function App() {
 
     const vieja =
       Number(
-        localStorage.getItem(
-          'metaAhorro'
-        )
+        localStorage.getItem('metaAhorro')
       ) || 0
 
     return vieja > 0
@@ -513,18 +512,12 @@ function App() {
           movimientosMes
             .filter(
               (movimiento) =>
-                movimiento.tipo ===
-                'ingreso'
+                movimiento.tipo === 'ingreso'
             )
             .reduce(
-              (
-                total,
-                movimiento
-              ) =>
+              (total, movimiento) =>
                 total +
-                Number(
-                  movimiento.monto
-                ),
+                Number(movimiento.monto),
               0
             )
 
@@ -532,18 +525,12 @@ function App() {
           movimientosMes
             .filter(
               (movimiento) =>
-                movimiento.tipo ===
-                'gasto'
+                movimiento.tipo === 'gasto'
             )
             .reduce(
-              (
-                total,
-                movimiento
-              ) =>
+              (total, movimiento) =>
                 total +
-                Number(
-                  movimiento.monto
-                ),
+                Number(movimiento.monto),
               0
             )
 
@@ -620,25 +607,18 @@ function App() {
   const gastosPorCategoria =
     categoriasGasto
       .map(
-        (
-          nombreCategoria
-        ) => {
+        (nombreCategoria) => {
           const total =
             movimientosMes
               .filter(
-                (
-                  movimiento
-                ) =>
+                (movimiento) =>
                   movimiento.tipo ===
                     'gasto' &&
                   movimiento.categoria ===
                     nombreCategoria
               )
               .reduce(
-                (
-                  suma,
-                  movimiento
-                ) =>
+                (suma, movimiento) =>
                   suma +
                   Number(
                     movimiento.monto
@@ -651,13 +631,18 @@ function App() {
               nombreCategoria,
             total,
             porcentaje:
-              datosActuales.gastos >
-              0
+              datosActuales.gastos > 0
                 ? Math.round(
                     (total /
                       datosActuales.gastos) *
                       100
                   )
+                : 0,
+            porcentajeExacto:
+              datosActuales.gastos > 0
+                ? (total /
+                    datosActuales.gastos) *
+                  100
                 : 0,
           }
         }
@@ -673,6 +658,50 @@ function App() {
 
   const categoriaPrincipal =
     gastosPorCategoria[0] || null
+
+  let acumuladoGrafico = 0
+
+  const segmentosGrafico =
+    gastosPorCategoria.map(
+      (item, indice) => {
+        const inicio =
+          acumuladoGrafico
+
+        acumuladoGrafico +=
+          item.porcentajeExacto
+
+        const final =
+          acumuladoGrafico
+
+        return `${
+          coloresGrafico[
+            indice %
+              coloresGrafico.length
+          ]
+        } ${inicio}% ${final}%`
+      }
+    )
+
+  const fondoGrafico =
+    segmentosGrafico.length > 0
+      ? `conic-gradient(${segmentosGrafico.join(
+          ', '
+        )})`
+      : '#dce8e2'
+
+  const mesesGrafico =
+    mesesOrdenados.slice(-6)
+
+  const mayorMovimientoGrafico =
+    Math.max(
+      1,
+      ...mesesGrafico.flatMap(
+        (mes) => [
+          datosMeses[mes]?.ingresos || 0,
+          datosMeses[mes]?.gastos || 0,
+        ]
+      )
+    )
 
   const metaMes =
     Number(
@@ -743,6 +772,26 @@ function App() {
         .charAt(0)
         .toUpperCase() +
       nombreMes.slice(1)
+    )
+  }
+
+  const nombreMesCorto = (mes) => {
+    if (!mes) {
+      return ''
+    }
+
+    const [anio, numeroMes] =
+      mes.split('-').map(Number)
+
+    return new Date(
+      anio,
+      numeroMes - 1,
+      1
+    ).toLocaleDateString(
+      'es-CL',
+      {
+        month: 'short',
+      }
     )
   }
 
@@ -1292,15 +1341,12 @@ function App() {
               </p>
 
               <h1>
-                Control de Finanzas
-                del Hogar
+                Control de Finanzas del Hogar
               </h1>
 
               <p className="subtitulo">
-                Tú registras lo que
-                entra y lo que
-                gastas. La aplicación
-                hace los cálculos.
+                Tú registras lo que entra y lo que gastas.
+                La aplicación hace los cálculos.
               </p>
             </div>
 
@@ -1315,15 +1361,12 @@ function App() {
             </div>
 
             <h2>
-              Vamos a preparar tu
-              primer mes
+              Vamos a preparar tu primer mes
             </h2>
 
             <p className="subtitulo-panel">
-              Solo necesitamos saber
-              con qué mes comienzas y
-              cuánto dinero tienes
-              disponible hoy.
+              Solo necesitamos saber con qué mes comienzas
+              y cuánto dinero tienes disponible.
             </p>
 
             <form
@@ -1350,8 +1393,7 @@ function App() {
                 </label>
 
                 <label>
-                  Dinero disponible al
-                  comenzar
+                  Dinero disponible al comenzar
 
                   <input
                     type="number"
@@ -1368,13 +1410,8 @@ function App() {
               </div>
 
               <p className="ayuda-campo">
-                En los meses
-                siguientes este monto
-                se calculará
-                automáticamente con
-                lo que te haya
-                quedado del mes
-                anterior.
+                En los meses siguientes este monto se calculará
+                automáticamente con lo que te haya quedado.
               </p>
 
               <button
@@ -1406,14 +1443,11 @@ function App() {
             </p>
 
             <h1>
-              Control de Finanzas
-              del Hogar
+              Control de Finanzas del Hogar
             </h1>
 
             <p className="subtitulo">
-              Mira cuánto entra,
-              cuánto gastas y cuánto
-              te queda.
+              Mira cuánto entra, cuánto gastas y cuánto te queda.
             </p>
           </div>
 
@@ -1528,7 +1562,6 @@ function App() {
                   mesAnterior
                 )
               }
-              aria-label="Mes anterior"
             >
               ‹
             </button>
@@ -1542,7 +1575,6 @@ function App() {
                   e.target.value
                 )
               }
-              aria-label="Elegir mes"
             >
               {mesesOrdenados.map(
                 (mes) => (
@@ -1570,7 +1602,6 @@ function App() {
                   mesSiguiente
                 )
               }
-              aria-label="Mes siguiente"
             >
               ›
             </button>
@@ -1587,8 +1618,7 @@ function App() {
 
                 <strong>
                   {formatoDinero(
-                    datosActuales
-                      .saldoInicial
+                    datosActuales.saldoInicial
                   )}
                 </strong>
               </article>
@@ -1600,8 +1630,7 @@ function App() {
 
                 <strong>
                   {formatoDinero(
-                    datosActuales
-                      .ingresos
+                    datosActuales.ingresos
                   )}
                 </strong>
               </article>
@@ -1613,8 +1642,7 @@ function App() {
 
                 <strong>
                   {formatoDinero(
-                    datosActuales
-                      .gastos
+                    datosActuales.gastos
                   )}
                 </strong>
               </article>
@@ -1626,58 +1654,43 @@ function App() {
 
                 <strong>
                   {formatoDinero(
-                    datosActuales
-                      .saldoFinal
+                    datosActuales.saldoFinal
                   )}
                 </strong>
               </article>
             </section>
 
             <section className="panel mensaje-principal">
-              {datosActuales.diferencia >
-                0 && (
+              {datosActuales.diferencia > 0 && (
                 <p>
                   ✅ Este mes entró{' '}
                   <strong>
                     {formatoDinero(
-                      datosActuales
-                        .diferencia
+                      datosActuales.diferencia
                     )}
                   </strong>{' '}
-                  más de lo que
-                  gastaste.
+                  más de lo que gastaste.
                 </p>
               )}
 
-              {datosActuales.diferencia <
-                0 && (
+              {datosActuales.diferencia < 0 && (
                 <p>
-                  ℹ️ Este mes
-                  gastaste{' '}
+                  ℹ️ Este mes gastaste{' '}
                   <strong>
                     {formatoDinero(
                       Math.abs(
-                        datosActuales
-                          .diferencia
+                        datosActuales.diferencia
                       )
                     )}
                   </strong>{' '}
-                  más de lo que
-                  entró. La
-                  diferencia salió
-                  del dinero con el
-                  que comenzaste el
-                  mes.
+                  más de lo que entró.
                 </p>
               )}
 
-              {datosActuales.diferencia ===
-                0 && (
+              {datosActuales.diferencia === 0 && (
                 <p>
-                  ℹ️ Este mes lo que
-                  entró y lo que
-                  gastaste está
-                  equilibrado.
+                  ℹ️ Este mes lo que entró y lo que gastaste
+                  está equilibrado.
                 </p>
               )}
             </section>
@@ -1708,10 +1721,82 @@ function App() {
               </button>
             </section>
 
+            <section className="panel">
+              <h2>
+                📊 Vista rápida del mes
+              </h2>
+
+              <div className="panel-graficos-inicio">
+                <div className="grafico-circular-contenedor">
+                  <div
+                    className="grafico-circular"
+                    style={{
+                      background:
+                        fondoGrafico,
+                    }}
+                  >
+                    <div className="grafico-circular-centro">
+                      <span>
+                        Gastos
+                      </span>
+
+                      <strong>
+                        {formatoDinero(
+                          datosActuales.gastos
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="leyenda-grafico">
+                  {gastosPorCategoria.length === 0 ? (
+                    <p className="sin-datos-grafico">
+                      Registra gastos para ver cómo se distribuyen.
+                    </p>
+                  ) : (
+                    gastosPorCategoria
+                      .slice(0, 6)
+                      .map(
+                        (item, indice) => (
+                          <div
+                            className="leyenda-item"
+                            key={item.nombre}
+                          >
+                            <span
+                              className="leyenda-color"
+                              style={{
+                                background:
+                                  coloresGrafico[
+                                    indice %
+                                      coloresGrafico.length
+                                  ],
+                              }}
+                            />
+
+                            <div>
+                              <strong>
+                                {item.nombre}
+                              </strong>
+
+                              <span>
+                                {item.porcentaje}% ·{' '}
+                                {formatoDinero(
+                                  item.total
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      )
+                  )}
+                </div>
+              </div>
+            </section>
+
             <section className="panel resumen-mes-texto">
               <h2>
-                📌 Resumen sencillo
-                del mes
+                📌 Resumen sencillo del mes
               </h2>
 
               <div className="resumen-frases">
@@ -1719,8 +1804,7 @@ function App() {
                   Comenzaste con{' '}
                   <strong>
                     {formatoDinero(
-                      datosActuales
-                        .saldoInicial
+                      datosActuales.saldoInicial
                     )}
                   </strong>
                   .
@@ -1730,15 +1814,13 @@ function App() {
                   Entraron{' '}
                   <strong>
                     {formatoDinero(
-                      datosActuales
-                        .ingresos
+                      datosActuales.ingresos
                     )}
                   </strong>{' '}
                   y gastaste{' '}
                   <strong>
                     {formatoDinero(
-                      datosActuales
-                        .gastos
+                      datosActuales.gastos
                     )}
                   </strong>
                   .
@@ -1748,8 +1830,7 @@ function App() {
                   Ahora te quedan{' '}
                   <strong>
                     {formatoDinero(
-                      datosActuales
-                        .saldoFinal
+                      datosActuales.saldoFinal
                     )}
                   </strong>
                   .
@@ -1757,12 +1838,9 @@ function App() {
 
                 {categoriaPrincipal && (
                   <p>
-                    Tu categoría con
-                    más gasto es{' '}
+                    Tu categoría con más gasto es{' '}
                     <strong>
-                      {
-                        categoriaPrincipal.nombre
-                      }
+                      {categoriaPrincipal.nombre}
                     </strong>{' '}
                     con{' '}
                     <strong>
@@ -1779,8 +1857,7 @@ function App() {
             <section className="panel">
               <div className="panel-cabecera-simple">
                 <h2>
-                  🕘 Movimientos
-                  recientes
+                  🕘 Movimientos recientes
                 </h2>
 
                 <button
@@ -1796,22 +1873,16 @@ function App() {
                 </button>
               </div>
 
-              {movimientosMes.length ===
-              0 ? (
+              {movimientosMes.length === 0 ? (
                 <p className="sin-movimientos">
-                  Todavía no has
-                  registrado
-                  movimientos en
-                  este mes.
+                  Todavía no has registrado movimientos en este mes.
                 </p>
               ) : (
                 <div className="lista">
                   {movimientosMes
                     .slice(0, 3)
                     .map(
-                      (
-                        movimiento
-                      ) => (
+                      (movimiento) => (
                         <article
                           className="movimiento"
                           key={
@@ -1820,15 +1891,11 @@ function App() {
                         >
                           <div className="movimiento-info">
                             <strong>
-                              {
-                                movimiento.nombre
-                              }
+                              {movimiento.nombre}
                             </strong>
 
                             <span>
-                              {
-                                movimiento.categoria
-                              }{' '}
+                              {movimiento.categoria}{' '}
                               ·{' '}
                               {formatoFecha(
                                 movimiento.fecha
@@ -1862,24 +1929,21 @@ function App() {
           </>
         )}
 
-        {seccion ===
-          'movimientos' && (
+        {seccion === 'movimientos' && (
           <>
             <section
               className="panel"
               ref={formularioRef}
             >
               <h2>
-                {editandoId !==
-                null
+                {editandoId !== null
                   ? '✏️ Estás editando un movimiento'
                   : '➕ Registrar un movimiento'}
               </h2>
 
               <p className="subtitulo-panel">
-                {editandoId !==
-                null
-                  ? 'Corrige lo que necesites y después pulsa Guardar cambios.'
+                {editandoId !== null
+                  ? 'Corrige lo que necesites y pulsa Guardar cambios.'
                   : 'Primero elige si el dinero salió o entró a tu hogar.'}
               </p>
 
@@ -1887,8 +1951,7 @@ function App() {
                 <button
                   type="button"
                   className={
-                    tipo ===
-                    'gasto'
+                    tipo === 'gasto'
                       ? 'activo'
                       : ''
                   }
@@ -1904,8 +1967,7 @@ function App() {
                 <button
                   type="button"
                   className={
-                    tipo ===
-                    'ingreso'
+                    tipo === 'ingreso'
                       ? 'activo'
                       : ''
                   }
@@ -1933,13 +1995,11 @@ function App() {
                       value={nombre}
                       onChange={(e) =>
                         setNombre(
-                          e.target
-                            .value
+                          e.target.value
                         )
                       }
                       placeholder={
-                        tipo ===
-                        'gasto'
+                        tipo === 'gasto'
                           ? 'Ej: Supermercado'
                           : 'Ej: Sueldo'
                       }
@@ -1955,8 +2015,7 @@ function App() {
                       value={monto}
                       onChange={(e) =>
                         setMonto(
-                          e.target
-                            .value
+                          e.target.value
                         )
                       }
                       placeholder="Ej: 25000"
@@ -1967,28 +2026,19 @@ function App() {
                     Categoría
 
                     <select
-                      value={
-                        categoria
-                      }
+                      value={categoria}
                       onChange={(e) =>
                         setCategoria(
-                          e.target
-                            .value
+                          e.target.value
                         )
                       }
                     >
                       {categorias.map(
-                        (
-                          opcion
-                        ) => (
+                        (opcion) => (
                           <option
-                            key={
-                              opcion
-                            }
+                            key={opcion}
                           >
-                            {
-                              opcion
-                            }
+                            {opcion}
                           </option>
                         )
                       )}
@@ -2007,8 +2057,7 @@ function App() {
                       value={fecha}
                       onChange={(e) =>
                         setFecha(
-                          e.target
-                            .value
+                          e.target.value
                         )
                       }
                     />
@@ -2019,17 +2068,14 @@ function App() {
                   className="guardar"
                   type="submit"
                 >
-                  {editandoId !==
-                  null
+                  {editandoId !== null
                     ? 'Guardar cambios'
-                    : tipo ===
-                        'gasto'
+                    : tipo === 'gasto'
                       ? 'Guardar gasto'
                       : 'Guardar ingreso'}
                 </button>
 
-                {editandoId !==
-                  null && (
+                {editandoId !== null && (
                   <button
                     className="cancelar"
                     type="button"
@@ -2051,19 +2097,14 @@ function App() {
                 )}
               </h2>
 
-              {movimientosMes.length ===
-              0 ? (
+              {movimientosMes.length === 0 ? (
                 <p className="sin-movimientos">
-                  Todavía no hay
-                  movimientos en
-                  este mes.
+                  Todavía no hay movimientos en este mes.
                 </p>
               ) : (
                 <div className="lista">
                   {movimientosMes.map(
-                    (
-                      movimiento
-                    ) => (
+                    (movimiento) => (
                       <article
                         className="movimiento"
                         key={
@@ -2072,15 +2113,11 @@ function App() {
                       >
                         <div className="movimiento-info">
                           <strong>
-                            {
-                              movimiento.nombre
-                            }
+                            {movimiento.nombre}
                           </strong>
 
                           <span>
-                            {
-                              movimiento.categoria
-                            }{' '}
+                            {movimiento.categoria}{' '}
                             ·{' '}
                             {formatoFecha(
                               movimiento.fecha
@@ -2110,7 +2147,6 @@ function App() {
                           <button
                             className="editar"
                             type="button"
-                            aria-label={`Editar ${movimiento.nombre}`}
                             onClick={() =>
                               editarMovimiento(
                                 movimiento
@@ -2123,7 +2159,6 @@ function App() {
                           <button
                             className="eliminar"
                             type="button"
-                            aria-label={`Eliminar ${movimiento.nombre}`}
                             onClick={() =>
                               eliminarMovimiento(
                                 movimiento
@@ -2142,21 +2177,16 @@ function App() {
           </>
         )}
 
-        {seccion ===
-          'planificacion' && (
+        {seccion === 'planificacion' && (
           <>
             <section className="panel">
               <h2>
-                🎯 Meta para guardar
-                este mes
+                🎯 Meta para guardar este mes
               </h2>
 
               <p className="subtitulo-panel">
-                Es opcional. Indica
-                cuánto quieres que
-                tus ingresos superen
-                a tus gastos este
-                mes.
+                Es opcional. Indica cuánto quieres que tus ingresos
+                superen a tus gastos este mes.
               </p>
 
               <div className="campo-presupuesto">
@@ -2170,16 +2200,12 @@ function App() {
                   }
                   onChange={(e) =>
                     setMetasPorMes(
-                      (
-                        actuales
-                      ) => ({
+                      (actuales) => ({
                         ...actuales,
 
                         [mesSeleccionado]:
                           Number(
-                            e
-                              .target
-                              .value
+                            e.target.value
                           ) || 0,
                       })
                     )
@@ -2196,10 +2222,7 @@ function App() {
                     </span>
 
                     <strong>
-                      {
-                        porcentajeMeta
-                      }
-                      %
+                      {porcentajeMeta}%
                     </strong>
                   </div>
 
@@ -2213,8 +2236,7 @@ function App() {
                   </div>
 
                   <p>
-                    {avanceMeta >
-                    0
+                    {avanceMeta > 0
                       ? `Hasta ahora tus ingresos superan tus gastos en ${formatoDinero(
                           avanceMeta
                         )}.`
@@ -2230,30 +2252,22 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                Opcional: decide
-                cuánto quieres
-                gastar como máximo
-                en cada categoría
-                durante este mes.
+                Opcional: decide cuánto quieres gastar como máximo
+                en cada categoría durante este mes.
               </p>
 
               <div className="presupuestos-categorias">
                 {categoriasGasto.map(
-                  (
-                    nombreCategoria
-                  ) => {
+                  (nombreCategoria) => {
                     const gasto =
                       gastosPorCategoria.find(
-                        (
-                          item
-                        ) =>
+                        (item) =>
                           item.nombre ===
                           nombreCategoria
                       )
 
                     const gastado =
-                      gasto?.total ||
-                      0
+                      gasto?.total || 0
 
                     const limite =
                       Number(
@@ -2280,9 +2294,7 @@ function App() {
                       >
                         <div className="categoria-cabecera">
                           <strong>
-                            {
-                              nombreCategoria
-                            }
+                            {nombreCategoria}
                           </strong>
 
                           <span>
@@ -2290,8 +2302,7 @@ function App() {
                               gastado
                             )}
 
-                            {limite >
-                              0 &&
+                            {limite > 0 &&
                               ` de ${formatoDinero(
                                 limite
                               )}`}
@@ -2309,16 +2320,13 @@ function App() {
                           onChange={(e) =>
                             actualizarLimite(
                               nombreCategoria,
-                              e
-                                .target
-                                .value
+                              e.target.value
                             )
                           }
                           placeholder="Escribe un límite"
                         />
 
-                        {limite >
-                          0 && (
+                        {limite > 0 && (
                           <>
                             <div className="barra-categoria">
                               <div
@@ -2332,29 +2340,17 @@ function App() {
                               />
                             </div>
 
-                            {porcentaje >=
-                            100 ? (
+                            {porcentaje >= 100 ? (
                               <p className="alerta-gasto alerta-roja">
-                                🚨
-                                Superaste
-                                este
-                                límite.
+                                🚨 Superaste este límite.
                               </p>
-                            ) : porcentaje >=
-                              80 ? (
+                            ) : porcentaje >= 80 ? (
                               <p className="alerta-gasto alerta-amarilla">
-                                ⚠️
-                                Estás
-                                cerca
-                                del
-                                límite.
+                                ⚠️ Estás cerca del límite.
                               </p>
                             ) : (
                               <p className="alerta-gasto alerta-verde">
-                                ✓ Vas
-                                dentro
-                                del
-                                límite.
+                                ✓ Vas dentro del límite.
                               </p>
                             )}
                           </>
@@ -2368,155 +2364,172 @@ function App() {
 
             <section className="panel">
               <h2>
-                📊 ¿En qué estás
-                gastando?
+                📊 Gastos por categoría
               </h2>
 
-              {gastosPorCategoria.length ===
-              0 ? (
-                <p className="sin-movimientos">
-                  Cuando registres
-                  gastos aparecerán
-                  aquí organizados
-                  por categoría.
-                </p>
-              ) : (
+              <div className="panel-graficos-planificacion">
+                <div className="grafico-circular-contenedor">
+                  <div
+                    className="grafico-circular"
+                    style={{
+                      background:
+                        fondoGrafico,
+                    }}
+                  >
+                    <div className="grafico-circular-centro">
+                      <span>
+                        Total
+                      </span>
+
+                      <strong>
+                        {formatoDinero(
+                          datosActuales.gastos
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="categorias-resumen">
-                  {gastosPorCategoria.map(
-                    (item) => (
-                      <div
-                        className="categoria-resumen"
-                        key={
-                          item.nombre
-                        }
-                      >
-                        <div className="categoria-texto">
-                          <strong>
-                            {
-                              item.nombre
-                            }
-                          </strong>
+                  {gastosPorCategoria.length === 0 ? (
+                    <p className="sin-movimientos">
+                      Cuando registres gastos aparecerán aquí.
+                    </p>
+                  ) : (
+                    gastosPorCategoria.map(
+                      (item, indice) => (
+                        <div
+                          className="categoria-resumen"
+                          key={item.nombre}
+                        >
+                          <div className="categoria-texto">
+                            <strong>
+                              <span
+                                className="punto-categoria"
+                                style={{
+                                  background:
+                                    coloresGrafico[
+                                      indice %
+                                        coloresGrafico.length
+                                    ],
+                                }}
+                              />
 
-                          <span>
-                            {formatoDinero(
-                              item.total
-                            )}{' '}
-                            ·{' '}
-                            {
-                              item.porcentaje
-                            }
-                            %
-                          </span>
-                        </div>
+                              {item.nombre}
+                            </strong>
 
-                        <div className="barra-categoria">
-                          <div
-                            className="barra-categoria-interior"
-                            style={{
-                              width: `${item.porcentaje}%`,
-                            }}
-                          />
+                            <span>
+                              {formatoDinero(
+                                item.total
+                              )}{' '}
+                              · {item.porcentaje}%
+                            </span>
+                          </div>
+
+                          <div className="barra-categoria">
+                            <div
+                              className="barra-categoria-interior"
+                              style={{
+                                width: `${item.porcentaje}%`,
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
+                      )
                     )
                   )}
                 </div>
-              )}
+              </div>
             </section>
 
             <section className="panel">
               <h2>
-                📈 Comparación con
-                el mes anterior
+                📈 Evolución de los últimos meses
               </h2>
 
-              {!mesAnterior ? (
-                <p className="sin-movimientos">
-                  Este es tu primer
-                  mes, así que
-                  todavía no hay
-                  otro mes para
-                  comparar.
-                </p>
-              ) : (
-                <div className="comparacion-simple">
-                  <article>
-                    <span>
-                      Gastos
-                    </span>
+              <p className="subtitulo-panel">
+                Compara visualmente cuánto entró y cuánto gastaste.
+              </p>
 
-                    <strong>
-                      {formatoDinero(
-                        datosActuales
-                          .gastos
-                      )}
-                    </strong>
+              <div className="grafico-meses">
+                {mesesGrafico.map(
+                  (mes) => {
+                    const datos =
+                      datosMeses[mes]
 
-                    <small>
-                      {nombreDelMes(
-                        mesAnterior
-                      )}
-                      :{' '}
-                      {formatoDinero(
-                        datosMeses[
-                          mesAnterior
-                        ].gastos
-                      )}
-                    </small>
-                  </article>
+                    const anchoIngresos =
+                      Math.round(
+                        (datos.ingresos /
+                          mayorMovimientoGrafico) *
+                          100
+                      )
 
-                  <article>
-                    <span>
-                      Ingresos
-                    </span>
+                    const anchoGastos =
+                      Math.round(
+                        (datos.gastos /
+                          mayorMovimientoGrafico) *
+                          100
+                      )
 
-                    <strong>
-                      {formatoDinero(
-                        datosActuales
-                          .ingresos
-                      )}
-                    </strong>
+                    return (
+                      <div
+                        className="fila-grafico-mes"
+                        key={mes}
+                      >
+                        <div className="mes-grafico-nombre">
+                          {nombreMesCorto(
+                            mes
+                          )}
+                        </div>
 
-                    <small>
-                      {nombreDelMes(
-                        mesAnterior
-                      )}
-                      :{' '}
-                      {formatoDinero(
-                        datosMeses[
-                          mesAnterior
-                        ].ingresos
-                      )}
-                    </small>
-                  </article>
+                        <div className="barras-mes">
+                          <div className="barra-mes-fila">
+                            <span>
+                              Entró
+                            </span>
 
-                  <article>
-                    <span>
-                      Dinero al
-                      terminar
-                    </span>
+                            <div className="barra-mes-fondo">
+                              <div
+                                className="barra-mes-ingresos"
+                                style={{
+                                  width: `${anchoIngresos}%`,
+                                }}
+                              />
+                            </div>
 
-                    <strong>
-                      {formatoDinero(
-                        datosActuales
-                          .saldoFinal
-                      )}
-                    </strong>
+                            <strong>
+                              {formatoDinero(
+                                datos.ingresos
+                              )}
+                            </strong>
+                          </div>
 
-                    <small>
-                      {nombreDelMes(
-                        mesAnterior
-                      )}
-                      :{' '}
-                      {formatoDinero(
-                        datosMeses[
-                          mesAnterior
-                        ].saldoFinal
-                      )}
-                    </small>
-                  </article>
-                </div>
-              )}
+                          <div className="barra-mes-fila">
+                            <span>
+                              Gastó
+                            </span>
+
+                            <div className="barra-mes-fondo">
+                              <div
+                                className="barra-mes-gastos"
+                                style={{
+                                  width: `${anchoGastos}%`,
+                                }}
+                              />
+                            </div>
+
+                            <strong>
+                              {formatoDinero(
+                                datos.gastos
+                              )}
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }
+                )}
+              </div>
             </section>
           </>
         )}
@@ -2524,15 +2537,12 @@ function App() {
         {seccion === 'mas' && (
           <>
             <section className="panel">
-              <h2>❓ Ayuda</h2>
+              <h2>
+                ❓ Ayuda
+              </h2>
 
               <p className="subtitulo-panel">
-                Una guía sencilla
-                para entender la
-                aplicación sin
-                conocimientos de
-                finanzas ni
-                informática.
+                Una guía sencilla para entender la aplicación.
               </p>
 
               <button
@@ -2544,8 +2554,7 @@ function App() {
                   )
                 }
               >
-                Ver cómo usar la
-                aplicación
+                Ver cómo usar la aplicación
               </button>
             </section>
 
@@ -2555,10 +2564,8 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                El modo oscuro solo
-                cambia el aspecto.
-                Tus datos no
-                cambian.
+                El modo oscuro solo cambia el aspecto.
+                Tus datos no cambian.
               </p>
 
               <button
@@ -2579,25 +2586,16 @@ function App() {
 
             <section className="panel">
               <h2>
-                📆 Calendario
-                automático
+                📆 Calendario automático
               </h2>
 
-              <p className="subtitulo-panel">
-                La aplicación
-                reconoce
-                automáticamente los
-                cambios de mes
-                usando la fecha de
-                tu dispositivo y
-                tiene preparados
-                los próximos 10
-                años.
+              <p>
+                La aplicación reconoce automáticamente los cambios
+                de mes usando la fecha de tu dispositivo.
               </p>
 
               <p>
-                Calendario
-                disponible hasta{' '}
+                Calendario disponible hasta{' '}
                 <strong>
                   {nombreDelMes(
                     ultimoMesCalendario
@@ -2609,22 +2607,12 @@ function App() {
 
             <section className="panel">
               <h2>
-                🏁 Dinero del primer
-                mes
+                🏁 Dinero del primer mes
               </h2>
 
               <p className="subtitulo-panel">
-                Si te equivocaste al
-                comenzar, puedes
-                corregir aquí el
-                dinero inicial de{' '}
-                {nombreDelMes(
-                  mesesOrdenados[0]
-                )}
-                . Los meses
-                siguientes se
-                recalcularán
-                automáticamente.
+                Si te equivocaste al comenzar, puedes corregir aquí
+                el dinero inicial. Los meses posteriores se recalcularán.
               </p>
 
               <div className="campo-presupuesto">
@@ -2639,8 +2627,7 @@ function App() {
                   onChange={(e) =>
                     setSaldoInicialBase(
                       Number(
-                        e.target
-                          .value
+                        e.target.value
                       ) || 0
                     )
                   }
@@ -2654,19 +2641,9 @@ function App() {
               </h2>
 
               <p>
-                Por ahora tus
-                movimientos se
-                guardan en este
-                navegador. Más
-                adelante añadiremos
-                respaldo,
-                exportación y la
-                versión para celular
-                para que tus datos
-                estén mejor
-                protegidos y sean
-                más fáciles de
-                trasladar.
+                Por ahora tus movimientos se guardan en este navegador.
+                En una etapa posterior añadiremos respaldo,
+                exportación y sincronización.
               </p>
             </section>
           </>
@@ -2684,7 +2661,6 @@ function App() {
                   false
                 )
               }
-              aria-label="Cerrar"
             >
               ✕
             </button>
@@ -2694,16 +2670,12 @@ function App() {
             </h2>
 
             <p>
-              Esto es opcional.
-              Cuando cambie el mes
-              real, la aplicación
-              también puede hacerlo
-              automáticamente.
+              Esto es opcional. Cuando cambie el mes real,
+              la aplicación también puede hacerlo automáticamente.
             </p>
 
             <label>
-              Mes que quieres
-              preparar
+              Mes que quieres preparar
 
               <select
                 value={mesNuevo}
@@ -2731,9 +2703,7 @@ function App() {
             {mesNuevo && (
               <div className="nuevo-mes-resumen">
                 <span>
-                  Comenzará con el
-                  saldo que deje el
-                  mes anterior
+                  Comenzará con el saldo que deje el mes anterior
                 </span>
 
                 <strong>
@@ -2746,17 +2716,6 @@ function App() {
                 </strong>
               </div>
             )}
-
-            {mesNuevo &&
-              mesNuevo !==
-                proximoMes && (
-                <p className="consejo-ayuda">
-                  💡 Los meses
-                  intermedios también
-                  se crearán
-                  automáticamente.
-                </p>
-              )}
 
             <button
               className="guardar"
@@ -2817,24 +2776,9 @@ function App() {
             </div>
 
             <p>
-              Ese mismo monto pasa
-              automáticamente como
-              dinero inicial del
-              nuevo mes.
+              Ese mismo monto pasa automáticamente como dinero inicial
+              del nuevo mes.
             </p>
-
-            {notificacionMes.mesesPasados >
-              1 && (
-              <p className="consejo-ayuda">
-                La aplicación
-                detectó que pasaron
-                varios meses y
-                preparó los
-                períodos
-                intermedios
-                automáticamente.
-              </p>
-            )}
 
             <button
               className="guardar"
@@ -2862,145 +2806,57 @@ function App() {
                   false
                 )
               }
-              aria-label="Cerrar ayuda"
             >
               ✕
             </button>
 
             <h2>
-              ❓ Cómo usar la
-              aplicación
+              ❓ Cómo usar la aplicación
             </h2>
 
             <div className="instrucciones">
               <p>
-                <strong>
-                  1. Inicio:
-                </strong>{' '}
-                aquí ves lo más
-                importante del mes:
-                con cuánto
-                comenzaste, cuánto
-                entró, cuánto
-                gastaste y cuánto
-                te queda.
+                <strong>🏠 Inicio:</strong>{' '}
+                mira rápidamente cuánto comenzaste,
+                cuánto entró, cuánto gastaste y cuánto te queda.
               </p>
 
               <p>
-                <strong>
-                  2. Registrar
-                  dinero:
-                </strong>{' '}
-                entra en
-                Movimientos y elige{' '}
-                <strong>
-                  − Gasto
-                </strong>{' '}
-                o{' '}
-                <strong>
-                  + Ingreso
-                </strong>
-                .
+                <strong>🧾 Movimientos:</strong>{' '}
+                registra ingresos y gastos, o corrige movimientos anteriores.
               </p>
 
               <p>
-                <strong>
-                  3. Meses:
-                </strong>{' '}
-                usa las flechas o el
-                selector para
-                consultar otro mes.
-                Cambiar de mes nunca
-                borra datos.
+                <strong>🎯 Planificación:</strong>{' '}
+                consulta gráficos, define metas y establece límites de gasto.
               </p>
 
               <p>
-                <strong>
-                  4. Cambio
-                  automático:
-                </strong>{' '}
-                cuando comience un
-                nuevo mes según la
-                fecha de tu
-                dispositivo, la app
-                te avisará cuánto
-                quedó del anterior y
-                trasladará ese monto
-                al nuevo mes.
+                <strong>📅 Meses:</strong>{' '}
+                usa las flechas o el selector para consultar otros meses.
               </p>
 
               <p>
-                <strong>
-                  5. Nuevo mes:
-                </strong>{' '}
-                sirve para preparar
-                un mes futuro antes
-                de que llegue, pero
-                no es obligatorio.
+                <strong>🔄 Cambio automático:</strong>{' '}
+                cuando comience un nuevo mes, la aplicación trasladará
+                automáticamente el dinero que quedó del mes anterior.
               </p>
 
               <p>
-                <strong>
-                  6. Si corriges un
-                  mes anterior:
-                </strong>{' '}
-                los meses siguientes
-                se recalculan
-                automáticamente.
+                <strong>✏️ Editar:</strong>{' '}
+                toca el lápiz y la aplicación te llevará al formulario correcto.
               </p>
 
               <p>
-                <strong>
-                  7. Planificación:
-                </strong>{' '}
-                las metas y límites
-                son opcionales.
-              </p>
-
-              <p>
-                <strong>
-                  8. Editar:
-                </strong>{' '}
-                pulsa ✏️ y la
-                aplicación te lleva
-                directamente al
-                formulario.
-              </p>
-
-              <p>
-                <strong>
-                  9. Eliminar:
-                </strong>{' '}
-                pulsa 🗑️. Primero
-                tendrás que
-                confirmar y después
-                podrás usar
-                Deshacer durante
-                unos segundos.
-              </p>
-
-              <p>
-                <strong>
-                  Ejemplo:
-                </strong>{' '}
-                si comienzas
-                septiembre con
-                $1.000.000, entran
-                $200.000 y gastas
-                $300.000, terminas
-                con $900.000.
-                Octubre comenzará
-                automáticamente con
-                esos $900.000.
+                <strong>🗑️ Eliminar:</strong>{' '}
+                antes de borrar un movimiento tendrás que confirmarlo.
+                Después podrás usar Deshacer unos segundos.
               </p>
             </div>
 
             <p className="consejo-ayuda">
-              💡 Tú registras el
-              dinero que entra y
-              sale; la aplicación
-              hace los cálculos y
-              organiza los meses.
+              💡 Tú registras lo que entra y sale.
+              La aplicación organiza los meses y hace los cálculos.
             </p>
           </div>
         </div>
