@@ -19,6 +19,8 @@ function App() {
     new Date().toISOString().split('T')[0]
   )
 
+  const [editandoId, setEditandoId] = useState(null)
+
   useEffect(() => {
     localStorage.setItem('presupuesto', presupuesto)
   }, [presupuesto])
@@ -61,11 +63,39 @@ function App() {
     return `${dia}/${mes}/${anio}`
   }
 
-  const agregarMovimiento = (e) => {
+  const limpiarFormulario = () => {
+    setNombre('')
+    setMonto('')
+    setCategoria('Alimentación')
+    setFecha(new Date().toISOString().split('T')[0])
+    setEditandoId(null)
+  }
+
+  const guardarMovimiento = (e) => {
     e.preventDefault()
 
     if (!nombre.trim() || !monto || Number(monto) <= 0) {
       alert('Completa el nombre y escribe un monto válido.')
+      return
+    }
+
+    if (editandoId !== null) {
+      setMovimientos(
+        movimientos.map((movimiento) =>
+          movimiento.id === editandoId
+            ? {
+                ...movimiento,
+                tipo,
+                nombre: nombre.trim(),
+                monto: Number(monto),
+                categoria,
+                fecha,
+              }
+            : movimiento
+        )
+      )
+
+      limpiarFormulario()
       return
     }
 
@@ -79,14 +109,35 @@ function App() {
     }
 
     setMovimientos([nuevoMovimiento, ...movimientos])
-    setNombre('')
-    setMonto('')
+    limpiarFormulario()
+  }
+
+  const editarMovimiento = (movimiento) => {
+    setTipo(movimiento.tipo)
+    setNombre(movimiento.nombre)
+    setMonto(String(movimiento.monto))
+    setCategoria(movimiento.categoria)
+    setFecha(movimiento.fecha)
+    setEditandoId(movimiento.id)
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }
+
+  const cancelarEdicion = () => {
+    limpiarFormulario()
   }
 
   const eliminarMovimiento = (id) => {
     setMovimientos(
       movimientos.filter((movimiento) => movimiento.id !== id)
     )
+
+    if (editandoId === id) {
+      limpiarFormulario()
+    }
   }
 
   return (
@@ -153,7 +204,11 @@ function App() {
       </section>
 
       <section className="panel">
-        <h2>Agregar movimiento</h2>
+        <h2>
+          {editandoId !== null
+            ? 'Editar movimiento'
+            : 'Agregar movimiento'}
+        </h2>
 
         <div className="selector-tipo">
           <button
@@ -173,7 +228,7 @@ function App() {
           </button>
         </div>
 
-        <form onSubmit={agregarMovimiento}>
+        <form onSubmit={guardarMovimiento}>
           <div className="formulario-grid">
             <label>
               Nombre
@@ -228,8 +283,22 @@ function App() {
           </div>
 
           <button className="guardar" type="submit">
-            {tipo === 'gasto' ? 'Guardar gasto' : 'Guardar ingreso'}
+            {editandoId !== null
+              ? 'Guardar cambios'
+              : tipo === 'gasto'
+                ? 'Guardar gasto'
+                : 'Guardar ingreso'}
           </button>
+
+          {editandoId !== null && (
+            <button
+              className="cancelar"
+              type="button"
+              onClick={cancelarEdicion}
+            >
+              Cancelar edición
+            </button>
+          )}
         </form>
       </section>
 
@@ -247,7 +316,8 @@ function App() {
                 <div className="movimiento-info">
                   <strong>{movimiento.nombre}</strong>
                   <span>
-                    {movimiento.categoria} · {formatoFecha(movimiento.fecha)}
+                    {movimiento.categoria} ·{' '}
+                    {formatoFecha(movimiento.fecha)}
                   </span>
                 </div>
 
@@ -262,6 +332,15 @@ function App() {
                     {movimiento.tipo === 'gasto' ? '− ' : '+ '}
                     {formatoDinero(movimiento.monto)}
                   </strong>
+
+                  <button
+                    className="editar"
+                    type="button"
+                    onClick={() => editarMovimiento(movimiento)}
+                    aria-label={`Editar ${movimiento.nombre}`}
+                  >
+                    ✏️
+                  </button>
 
                   <button
                     className="eliminar"
