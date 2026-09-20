@@ -2,6 +2,29 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
+  const categoriasGasto = [
+    'Alimentación',
+    'Arriendo',
+    'Gastos comunes',
+    'Agua',
+    'Luz',
+    'Gas',
+    'Transporte',
+    'Salud',
+    'Educación',
+    'Compras',
+    'Ahorro',
+    'Otros',
+  ]
+
+  const categoriasIngreso = [
+    'Sueldo',
+    'Ingreso extra',
+    'Venta',
+    'Reembolso',
+    'Otros',
+  ]
+
   const [presupuesto, setPresupuesto] = useState(() => {
     return Number(localStorage.getItem('presupuesto')) || 0
   })
@@ -63,12 +86,28 @@ function App() {
     return `${dia}/${mes}/${anio}`
   }
 
+  const cambiarTipo = (nuevoTipo) => {
+    setTipo(nuevoTipo)
+
+    if (nuevoTipo === 'gasto') {
+      setCategoria('Alimentación')
+    } else {
+      setCategoria('Sueldo')
+    }
+  }
+
   const limpiarFormulario = () => {
     setNombre('')
     setMonto('')
-    setCategoria('Alimentación')
-    setFecha(new Date().toISOString().split('T')[0])
     setEditandoId(null)
+
+    if (tipo === 'gasto') {
+      setCategoria('Alimentación')
+    } else {
+      setCategoria('Sueldo')
+    }
+
+    setFecha(new Date().toISOString().split('T')[0])
   }
 
   const guardarMovimiento = (e) => {
@@ -139,6 +178,9 @@ function App() {
       limpiarFormulario()
     }
   }
+
+  const categorias =
+    tipo === 'gasto' ? categoriasGasto : categoriasIngreso
 
   return (
     <main className="app">
@@ -214,7 +256,7 @@ function App() {
           <button
             type="button"
             className={tipo === 'gasto' ? 'activo' : ''}
-            onClick={() => setTipo('gasto')}
+            onClick={() => cambiarTipo('gasto')}
           >
             − Gasto
           </button>
@@ -222,7 +264,7 @@ function App() {
           <button
             type="button"
             className={tipo === 'ingreso' ? 'activo' : ''}
-            onClick={() => setTipo('ingreso')}
+            onClick={() => cambiarTipo('ingreso')}
           >
             + Ingreso
           </button>
@@ -257,18 +299,9 @@ function App() {
                 value={categoria}
                 onChange={(e) => setCategoria(e.target.value)}
               >
-                <option>Alimentación</option>
-                <option>Arriendo</option>
-                <option>Gastos comunes</option>
-                <option>Agua</option>
-                <option>Luz</option>
-                <option>Gas</option>
-                <option>Transporte</option>
-                <option>Salud</option>
-                <option>Educación</option>
-                <option>Compras</option>
-                <option>Ahorro</option>
-                <option>Otros</option>
+                {categorias.map((opcion) => (
+                  <option key={opcion}>{opcion}</option>
+                ))}
               </select>
             </label>
 
