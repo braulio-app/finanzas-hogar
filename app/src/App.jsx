@@ -47,6 +47,8 @@ function App() {
   )
   const [editandoId, setEditandoId] = useState(null)
 
+  const [mesSeleccionado, setMesSeleccionado] = useState('todos')
+
   useEffect(() => {
     localStorage.setItem('modoOscuro', modoOscuro)
   }, [modoOscuro])
@@ -59,11 +61,18 @@ function App() {
     localStorage.setItem('movimientos', JSON.stringify(movimientos))
   }, [movimientos])
 
-  const totalGastos = movimientos
+  const movimientosFiltrados =
+    mesSeleccionado === 'todos'
+      ? movimientos
+      : movimientos.filter((movimiento) =>
+          movimiento.fecha.startsWith(mesSeleccionado)
+        )
+
+  const totalGastos = movimientosFiltrados
     .filter((movimiento) => movimiento.tipo === 'gasto')
     .reduce((total, movimiento) => total + movimiento.monto, 0)
 
-  const totalIngresos = movimientos
+  const totalIngresos = movimientosFiltrados
     .filter((movimiento) => movimiento.tipo === 'ingreso')
     .reduce((total, movimiento) => total + movimiento.monto, 0)
 
@@ -81,7 +90,7 @@ function App() {
 
   const gastosPorCategoria = categoriasGasto
     .map((nombreCategoria) => {
-      const total = movimientos
+      const total = movimientosFiltrados
         .filter(
           (movimiento) =>
             movimiento.tipo === 'gasto' &&
@@ -241,6 +250,49 @@ function App() {
           </div>
         </section>
 
+        <section className="panel">
+          <h2>Filtrar por mes</h2>
+
+          <div className="filtro-mes">
+            <label htmlFor="mes">Mes</label>
+
+            <select
+              id="mes"
+              value={mesSeleccionado}
+              onChange={(e) => setMesSeleccionado(e.target.value)}
+            >
+              <option value="todos">Todos los meses</option>
+
+              {Array.from(
+                new Set(
+                  movimientos
+                    .map((movimiento) => movimiento.fecha.slice(0, 7))
+                    .sort()
+                    .reverse()
+                )
+              ).map((mes) => {
+                const [anio, numeroMes] = mes.split('-')
+
+                const nombreMes = new Date(
+                  Number(anio),
+                  Number(numeroMes) - 1,
+                  1
+                ).toLocaleDateString('es-CL', {
+                  month: 'long',
+                  year: 'numeric',
+                })
+
+                return (
+                  <option key={mes} value={mes}>
+                    {nombreMes.charAt(0).toUpperCase() +
+                      nombreMes.slice(1)}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+        </section>
+
         <section className="resumen">
           <article className="tarjeta">
             <span>💰 Disponible</span>
@@ -279,7 +331,7 @@ function App() {
 
           {gastosPorCategoria.length === 0 ? (
             <p className="sin-movimientos">
-              Registra un gasto para ver el resumen por categoría.
+              No hay gastos en el período seleccionado.
             </p>
           ) : (
             <div className="categorias-resumen">
@@ -399,13 +451,13 @@ function App() {
         <section className="panel">
           <h2>Historial de movimientos</h2>
 
-          {movimientos.length === 0 ? (
+          {movimientosFiltrados.length === 0 ? (
             <p className="sin-movimientos">
-              Todavía no has registrado movimientos.
+              No hay movimientos en el período seleccionado.
             </p>
           ) : (
             <div className="lista">
-              {movimientos.map((movimiento) => (
+              {movimientosFiltrados.map((movimiento) => (
                 <article className="movimiento" key={movimiento.id}>
                   <div className="movimiento-info">
                     <strong>{movimiento.nombre}</strong>
