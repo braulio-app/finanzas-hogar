@@ -1,0 +1,378 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f4f7f5;
+  color: #20352d;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+  padding: 45px 0 70px;
+}
+
+/* ENCABEZADO */
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  padding: 32px;
+  margin-bottom: 25px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #174c3c, #28745b);
+  color: white;
+  box-shadow: 0 12px 35px rgba(24, 76, 60, 0.18);
+}
+
+.encabezado h1 {
+  margin: 5px 0 10px;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+  line-height: 1.05;
+}
+
+.etiqueta {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.18em;
+  color: #bce8d7;
+}
+
+.subtitulo {
+  max-width: 650px;
+  margin: 0;
+  color: #e1f3ec;
+  line-height: 1.6;
+}
+
+.icono-hogar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 3rem;
+}
+
+/* PRESUPUESTO */
+
+.presupuesto {
+  padding: 24px;
+  margin-bottom: 22px;
+  border: 1px solid #dce8e2;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 7px 22px rgba(32, 53, 45, 0.06);
+}
+
+.presupuesto label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.campo-presupuesto {
+  display: flex;
+  align-items: center;
+  max-width: 430px;
+  overflow: hidden;
+  border: 2px solid #cdded6;
+  border-radius: 12px;
+}
+
+.campo-presupuesto:focus-within {
+  border-color: #28745b;
+}
+
+.campo-presupuesto span {
+  padding-left: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #28745b;
+}
+
+.campo-presupuesto input {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+/* TARJETAS DE RESUMEN */
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid #dce8e2;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 7px 22px rgba(32, 53, 45, 0.06);
+}
+
+.tarjeta span {
+  color: #687c74;
+  font-weight: 600;
+}
+
+.tarjeta strong {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  color: #174c3c;
+}
+
+/* PORCENTAJE */
+
+.progreso {
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  border-radius: 18px;
+  background: #e6f3ed;
+}
+
+.progreso-texto {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.progreso-texto strong {
+  color: #174c3c;
+}
+
+.barra {
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #cbded5;
+}
+
+.barra-interior {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3ba77b, #1f7055);
+  transition: width 0.3s ease;
+}
+
+/* PANELES */
+
+.panel {
+  padding: 28px;
+  margin-bottom: 22px;
+  border: 1px solid #dce8e2;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 7px 22px rgba(32, 53, 45, 0.06);
+}
+
+.panel h2 {
+  margin: 0 0 22px;
+  color: #174c3c;
+}
+
+/* GASTO / INGRESO */
+
+.selector-tipo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 6px;
+  border-radius: 14px;
+  background: #edf3f0;
+}
+
+.selector-tipo button {
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #53665e;
+  font-weight: bold;
+}
+
+.selector-tipo button.activo {
+  background: #174c3c;
+  color: white;
+  box-shadow: 0 4px 12px rgba(23, 76, 60, 0.2);
+}
+
+/* FORMULARIO */
+
+.formulario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.formulario-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #42564e;
+  font-weight: 700;
+}
+
+.formulario-grid input,
+.formulario-grid select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #cdded6;
+  border-radius: 11px;
+  outline: none;
+  background: #fbfdfc;
+  color: #20352d;
+}
+
+.formulario-grid input:focus,
+.formulario-grid select:focus {
+  border-color: #28745b;
+  box-shadow: 0 0 0 3px rgba(40, 116, 91, 0.1);
+}
+
+.guardar {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #174c3c;
+  color: white;
+  font-weight: 800;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.guardar:hover {
+  background: #20644e;
+  transform: translateY(-1px);
+}
+
+/* HISTORIAL */
+
+.sin-movimientos {
+  padding: 28px;
+  border: 2px dashed #d4e3dc;
+  border-radius: 14px;
+  text-align: center;
+  color: #778a82;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.movimiento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  border: 1px solid #e1ebe6;
+  border-radius: 13px;
+  background: #fbfdfc;
+}
+
+.movimiento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.movimiento-info span {
+  color: #788a82;
+  font-size: 0.9rem;
+}
+
+.movimiento-derecha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cantidad.gasto {
+  color: #bd4b4b;
+}
+
+.cantidad.ingreso {
+  color: #23825f;
+}
+
+.eliminar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 9px;
+  background: #f5eeee;
+}
+
+.eliminar:hover {
+  background: #f1dddd;
+}
+
+/* TELÉFONOS Y PANTALLAS PEQUEÑAS */
+
+@media (max-width: 700px) {
+  .app {
+    width: min(94%, 600px);
+    padding-top: 20px;
+  }
+
+  .encabezado {
+    padding: 25px;
+  }
+
+  .icono-hogar {
+    display: none;
+  }
+
+  .resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movimiento {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .movimiento-derecha {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
