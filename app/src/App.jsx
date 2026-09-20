@@ -25,6 +25,10 @@ function App() {
     'Otros',
   ]
 
+  const [modoOscuro, setModoOscuro] = useState(() => {
+    return localStorage.getItem('modoOscuro') === 'true'
+  })
+
   const [presupuesto, setPresupuesto] = useState(() => {
     return Number(localStorage.getItem('presupuesto')) || 0
   })
@@ -42,6 +46,10 @@ function App() {
     new Date().toISOString().split('T')[0]
   )
   const [editandoId, setEditandoId] = useState(null)
+
+  useEffect(() => {
+    localStorage.setItem('modoOscuro', modoOscuro)
+  }, [modoOscuro])
 
   useEffect(() => {
     localStorage.setItem('presupuesto', presupuesto)
@@ -109,12 +117,7 @@ function App() {
 
   const cambiarTipo = (nuevoTipo) => {
     setTipo(nuevoTipo)
-
-    if (nuevoTipo === 'gasto') {
-      setCategoria('Alimentación')
-    } else {
-      setCategoria('Sueldo')
-    }
+    setCategoria(nuevoTipo === 'gasto' ? 'Alimentación' : 'Sueldo')
   }
 
   const limpiarFormulario = () => {
@@ -198,245 +201,255 @@ function App() {
     tipo === 'gasto' ? categoriasGasto : categoriasIngreso
 
   return (
-    <main className="app">
-      <header className="encabezado">
-        <div>
-          <p className="etiqueta">MI HOGAR</p>
-          <h1>Control de Finanzas del Hogar</h1>
-          <p className="subtitulo">
-            Organiza tu presupuesto y descubre en qué estás gastando.
-          </p>
-        </div>
-
-        <div className="icono-hogar">🏠</div>
-      </header>
-
-      <section className="presupuesto">
-        <label htmlFor="presupuesto">Presupuesto inicial</label>
-
-        <div className="campo-presupuesto">
-          <span>$</span>
-          <input
-            id="presupuesto"
-            type="number"
-            min="0"
-            value={presupuesto || ''}
-            onChange={(e) => setPresupuesto(Number(e.target.value))}
-            placeholder="Ej: 1000000"
-          />
-        </div>
-      </section>
-
-      <section className="resumen">
-        <article className="tarjeta">
-          <span>💰 Disponible</span>
-          <strong>{formatoDinero(disponible)}</strong>
-        </article>
-
-        <article className="tarjeta">
-          <span>📈 Ingresos</span>
-          <strong>{formatoDinero(totalIngresos)}</strong>
-        </article>
-
-        <article className="tarjeta">
-          <span>📉 Gastos</span>
-          <strong>{formatoDinero(totalGastos)}</strong>
-        </article>
-      </section>
-
-      <section className="progreso">
-        <div className="progreso-texto">
-          <span>Dinero disponible</span>
-          <strong>{porcentajeDisponible}%</strong>
-        </div>
-
-        <div className="barra">
-          <div
-            className="barra-interior"
-            style={{
-              width: `${Math.min(porcentajeDisponible, 100)}%`,
-            }}
-          />
-        </div>
-      </section>
-
-      <section className="panel">
-        <h2>¿En qué estás gastando?</h2>
-
-        {gastosPorCategoria.length === 0 ? (
-          <p className="sin-movimientos">
-            Registra un gasto para ver el resumen por categoría.
-          </p>
-        ) : (
-          <div className="categorias-resumen">
-            {gastosPorCategoria.map((item) => (
-              <div className="categoria-resumen" key={item.nombre}>
-                <div className="categoria-texto">
-                  <strong>{item.nombre}</strong>
-                  <span>
-                    {formatoDinero(item.total)} · {item.porcentaje}%
-                  </span>
-                </div>
-
-                <div className="barra-categoria">
-                  <div
-                    className="barra-categoria-interior"
-                    style={{
-                      width: `${Math.min(item.porcentaje, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="panel">
-        <h2>
-          {editandoId !== null
-            ? 'Editar movimiento'
-            : 'Agregar movimiento'}
-        </h2>
-
-        <div className="selector-tipo">
-          <button
-            type="button"
-            className={tipo === 'gasto' ? 'activo' : ''}
-            onClick={() => cambiarTipo('gasto')}
-          >
-            − Gasto
-          </button>
-
-          <button
-            type="button"
-            className={tipo === 'ingreso' ? 'activo' : ''}
-            onClick={() => cambiarTipo('ingreso')}
-          >
-            + Ingreso
-          </button>
-        </div>
-
-        <form onSubmit={guardarMovimiento}>
-          <div className="formulario-grid">
-            <label>
-              Nombre
-              <input
-                type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                placeholder="Ej: Supermercado"
-              />
-            </label>
-
-            <label>
-              Monto
-              <input
-                type="number"
-                min="1"
-                value={monto}
-                onChange={(e) => setMonto(e.target.value)}
-                placeholder="Ej: 25000"
-              />
-            </label>
-
-            <label>
-              Categoría
-              <select
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-              >
-                {categorias.map((opcion) => (
-                  <option key={opcion}>{opcion}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Fecha
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-              />
-            </label>
+    <div className={modoOscuro ? 'tema-oscuro' : 'tema-claro'}>
+      <main className="app">
+        <header className="encabezado">
+          <div>
+            <p className="etiqueta">MI HOGAR</p>
+            <h1>Control de Finanzas del Hogar</h1>
+            <p className="subtitulo">
+              Organiza tu presupuesto y descubre en qué estás gastando.
+            </p>
           </div>
 
-          <button className="guardar" type="submit">
-            {editandoId !== null
-              ? 'Guardar cambios'
-              : tipo === 'gasto'
-                ? 'Guardar gasto'
-                : 'Guardar ingreso'}
-          </button>
-
-          {editandoId !== null && (
+          <div className="acciones-encabezado">
             <button
-              className="cancelar"
               type="button"
-              onClick={cancelarEdicion}
+              className="boton-tema"
+              onClick={() => setModoOscuro(!modoOscuro)}
             >
-              Cancelar edición
+              {modoOscuro ? '☀️ Claro' : '🌙 Oscuro'}
             </button>
-          )}
-        </form>
-      </section>
 
-      <section className="panel">
-        <h2>Historial de movimientos</h2>
-
-        {movimientos.length === 0 ? (
-          <p className="sin-movimientos">
-            Todavía no has registrado movimientos.
-          </p>
-        ) : (
-          <div className="lista">
-            {movimientos.map((movimiento) => (
-              <article className="movimiento" key={movimiento.id}>
-                <div className="movimiento-info">
-                  <strong>{movimiento.nombre}</strong>
-                  <span>
-                    {movimiento.categoria} ·{' '}
-                    {formatoFecha(movimiento.fecha)}
-                  </span>
-                </div>
-
-                <div className="movimiento-derecha">
-                  <strong
-                    className={
-                      movimiento.tipo === 'gasto'
-                        ? 'cantidad gasto'
-                        : 'cantidad ingreso'
-                    }
-                  >
-                    {movimiento.tipo === 'gasto' ? '− ' : '+ '}
-                    {formatoDinero(movimiento.monto)}
-                  </strong>
-
-                  <button
-                    className="editar"
-                    type="button"
-                    onClick={() => editarMovimiento(movimiento)}
-                    aria-label={`Editar ${movimiento.nombre}`}
-                  >
-                    ✏️
-                  </button>
-
-                  <button
-                    className="eliminar"
-                    type="button"
-                    onClick={() => eliminarMovimiento(movimiento.id)}
-                    aria-label={`Eliminar ${movimiento.nombre}`}
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </article>
-            ))}
+            <div className="icono-hogar">🏠</div>
           </div>
-        )}
-      </section>
-    </main>
+        </header>
+
+        <section className="presupuesto">
+          <label htmlFor="presupuesto">Presupuesto inicial</label>
+
+          <div className="campo-presupuesto">
+            <span>$</span>
+            <input
+              id="presupuesto"
+              type="number"
+              min="0"
+              value={presupuesto || ''}
+              onChange={(e) => setPresupuesto(Number(e.target.value))}
+              placeholder="Ej: 1000000"
+            />
+          </div>
+        </section>
+
+        <section className="resumen">
+          <article className="tarjeta">
+            <span>💰 Disponible</span>
+            <strong>{formatoDinero(disponible)}</strong>
+          </article>
+
+          <article className="tarjeta">
+            <span>📈 Ingresos</span>
+            <strong>{formatoDinero(totalIngresos)}</strong>
+          </article>
+
+          <article className="tarjeta">
+            <span>📉 Gastos</span>
+            <strong>{formatoDinero(totalGastos)}</strong>
+          </article>
+        </section>
+
+        <section className="progreso">
+          <div className="progreso-texto">
+            <span>Dinero disponible</span>
+            <strong>{porcentajeDisponible}%</strong>
+          </div>
+
+          <div className="barra">
+            <div
+              className="barra-interior"
+              style={{
+                width: `${Math.min(porcentajeDisponible, 100)}%`,
+              }}
+            />
+          </div>
+        </section>
+
+        <section className="panel">
+          <h2>¿En qué estás gastando?</h2>
+
+          {gastosPorCategoria.length === 0 ? (
+            <p className="sin-movimientos">
+              Registra un gasto para ver el resumen por categoría.
+            </p>
+          ) : (
+            <div className="categorias-resumen">
+              {gastosPorCategoria.map((item) => (
+                <div className="categoria-resumen" key={item.nombre}>
+                  <div className="categoria-texto">
+                    <strong>{item.nombre}</strong>
+                    <span>
+                      {formatoDinero(item.total)} · {item.porcentaje}%
+                    </span>
+                  </div>
+
+                  <div className="barra-categoria">
+                    <div
+                      className="barra-categoria-interior"
+                      style={{
+                        width: `${Math.min(item.porcentaje, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="panel">
+          <h2>
+            {editandoId !== null
+              ? 'Editar movimiento'
+              : 'Agregar movimiento'}
+          </h2>
+
+          <div className="selector-tipo">
+            <button
+              type="button"
+              className={tipo === 'gasto' ? 'activo' : ''}
+              onClick={() => cambiarTipo('gasto')}
+            >
+              − Gasto
+            </button>
+
+            <button
+              type="button"
+              className={tipo === 'ingreso' ? 'activo' : ''}
+              onClick={() => cambiarTipo('ingreso')}
+            >
+              + Ingreso
+            </button>
+          </div>
+
+          <form onSubmit={guardarMovimiento}>
+            <div className="formulario-grid">
+              <label>
+                Nombre
+                <input
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Ej: Supermercado"
+                />
+              </label>
+
+              <label>
+                Monto
+                <input
+                  type="number"
+                  min="1"
+                  value={monto}
+                  onChange={(e) => setMonto(e.target.value)}
+                  placeholder="Ej: 25000"
+                />
+              </label>
+
+              <label>
+                Categoría
+                <select
+                  value={categoria}
+                  onChange={(e) => setCategoria(e.target.value)}
+                >
+                  {categorias.map((opcion) => (
+                    <option key={opcion}>{opcion}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Fecha
+                <input
+                  type="date"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                />
+              </label>
+            </div>
+
+            <button className="guardar" type="submit">
+              {editandoId !== null
+                ? 'Guardar cambios'
+                : tipo === 'gasto'
+                  ? 'Guardar gasto'
+                  : 'Guardar ingreso'}
+            </button>
+
+            {editandoId !== null && (
+              <button
+                className="cancelar"
+                type="button"
+                onClick={cancelarEdicion}
+              >
+                Cancelar edición
+              </button>
+            )}
+          </form>
+        </section>
+
+        <section className="panel">
+          <h2>Historial de movimientos</h2>
+
+          {movimientos.length === 0 ? (
+            <p className="sin-movimientos">
+              Todavía no has registrado movimientos.
+            </p>
+          ) : (
+            <div className="lista">
+              {movimientos.map((movimiento) => (
+                <article className="movimiento" key={movimiento.id}>
+                  <div className="movimiento-info">
+                    <strong>{movimiento.nombre}</strong>
+                    <span>
+                      {movimiento.categoria} ·{' '}
+                      {formatoFecha(movimiento.fecha)}
+                    </span>
+                  </div>
+
+                  <div className="movimiento-derecha">
+                    <strong
+                      className={
+                        movimiento.tipo === 'gasto'
+                          ? 'cantidad gasto'
+                          : 'cantidad ingreso'
+                      }
+                    >
+                      {movimiento.tipo === 'gasto' ? '− ' : '+ '}
+                      {formatoDinero(movimiento.monto)}
+                    </strong>
+
+                    <button
+                      className="editar"
+                      type="button"
+                      onClick={() => editarMovimiento(movimiento)}
+                    >
+                      ✏️
+                    </button>
+
+                    <button
+                      className="eliminar"
+                      type="button"
+                      onClick={() => eliminarMovimiento(movimiento.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
   )
 }
 

@@ -419,3 +419,134 @@ button {
   background: linear-gradient(90deg, #3ba77b, #1f7055);
   transition: width 0.3s ease;
 }
+/* BOTÓN PARA CAMBIAR TEMA */
+
+.acciones-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.boton-tema {
+  padding: 11px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  font-weight: bold;
+}
+
+.boton-tema:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+
+/* TEMA CLARO Y OSCURO */
+
+.tema-claro,
+.tema-oscuro {
+  min-height: 100vh;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.tema-claro {
+  background: #f4f7f5;
+}
+
+.tema-oscuro {
+  background: #0f1412;
+  color: #e8f0ec;
+}
+
+.tema-oscuro .presupuesto,
+.tema-oscuro .tarjeta,
+.tema-oscuro .panel {
+  background: #18201d;
+  border-color: #2c3934;
+  box-shadow: 0 7px 22px rgba(0, 0, 0, 0.25);
+}
+
+.tema-oscuro .tarjeta span,
+.tema-oscuro .movimiento-info span,
+.tema-oscuro .categoria-texto span {
+  color: #a8b8b1;
+}
+
+.tema-oscuro .tarjeta strong,
+.tema-oscuro .panel h2,
+.tema-oscuro .categoria-texto strong {
+  color: #dff4eb;
+}
+
+.tema-oscuro .progreso {
+  background: #182a24;
+}
+
+.tema-oscuro .progreso-texto strong {
+  color: #bdebd9;
+}
+
+.tema-oscuro .barra {
+  background: #304039;
+}
+
+.tema-oscuro .campo-presupuesto {
+  border-color: #405149;
+}
+
+.tema-oscuro .campo-presupuesto input,
+.tema-oscuro .formulario-grid input,
+.tema-oscuro .formulario-grid select {
+  background: #111815;
+  border-color: #35453e;
+  color: #f0f5f2;
+}
+
+.tema-oscuro .formulario-grid label {
+  color: #c9d7d1;
+}
+
+.tema-oscuro .selector-tipo {
+  background: #111815;
+}
+
+.tema-oscuro .selector-tipo button {
+  color: #aebdb6;
+}
+
+.tema-oscuro .selector-tipo button.activo {
+  background: #28745b;
+  color: white;
+}
+
+.tema-oscuro .movimiento {
+  background: #111815;
+  border-color: #2c3934;
+}
+
+.tema-oscuro .movimiento-info strong {
+  color: #e8f0ec;
+}
+
+.tema-oscuro .barra-categoria {
+  background: #304039;
+}
+
+.tema-oscuro .sin-movimientos {
+  border-color: #35453e;
+  color: #9baca4;
+}
+
+.tema-oscuro .editar,
+.tema-oscuro .eliminar {
+  background: #26312d;
+}
+
+@media (max-width: 700px) {
+  .acciones-encabezado {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+}
