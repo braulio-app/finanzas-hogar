@@ -41,7 +41,6 @@ function App() {
   const [fecha, setFecha] = useState(
     new Date().toISOString().split('T')[0]
   )
-
   const [editandoId, setEditandoId] = useState(null)
 
   useEffect(() => {
@@ -71,6 +70,28 @@ function App() {
           )
         )
       : 0
+
+  const gastosPorCategoria = categoriasGasto
+    .map((nombreCategoria) => {
+      const total = movimientos
+        .filter(
+          (movimiento) =>
+            movimiento.tipo === 'gasto' &&
+            movimiento.categoria === nombreCategoria
+        )
+        .reduce((suma, movimiento) => suma + movimiento.monto, 0)
+
+      return {
+        nombre: nombreCategoria,
+        total,
+        porcentaje:
+          totalGastos > 0
+            ? Math.round((total / totalGastos) * 100)
+            : 0,
+      }
+    })
+    .filter((categoria) => categoria.total > 0)
+    .sort((a, b) => b.total - a.total)
 
   const formatoDinero = (valor) =>
     new Intl.NumberFormat('es-CL', {
@@ -243,6 +264,33 @@ function App() {
             }}
           />
         </div>
+      </section>
+
+      <section className="panel">
+        <h2>¿En qué estás gastando?</h2>
+
+        {gastosPorCategoria.length === 0 ? (
+          <p className="sin-movimientos">
+            Registra un gasto para ver el resumen por categoría.
+          </p>
+        ) : (
+          <div className="lista">
+            {gastosPorCategoria.map((item) => (
+              <article className="movimiento" key={item.nombre}>
+                <div className="movimiento-info">
+                  <strong>{item.nombre}</strong>
+                  <span>{item.porcentaje}% de tus gastos</span>
+                </div>
+
+                <div className="movimiento-derecha">
+                  <strong className="cantidad gasto">
+                    {formatoDinero(item.total)}
+                  </strong>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="panel">
