@@ -376,3 +376,46 @@ button {
     justify-content: space-between;
   }
 }
+/* RESUMEN DE GASTOS POR CATEGORÍA */
+
+.categorias-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.categoria-resumen {
+  width: 100%;
+}
+
+.categoria-texto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.categoria-texto strong {
+  color: #20352d;
+}
+
+.categoria-texto span {
+  color: #687c74;
+  font-size: 0.95rem;
+}
+
+.barra-categoria {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e1ebe6;
+}
+
+.barra-categoria-interior {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3ba77b, #1f7055);
+  transition: width 0.3s ease;
+}

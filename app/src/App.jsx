@@ -90,7 +90,7 @@ function App() {
             : 0,
       }
     })
-    .filter((categoria) => categoria.total > 0)
+    .filter((item) => item.total > 0)
     .sort((a, b) => b.total - a.total)
 
   const formatoDinero = (valor) =>
@@ -121,13 +121,7 @@ function App() {
     setNombre('')
     setMonto('')
     setEditandoId(null)
-
-    if (tipo === 'gasto') {
-      setCategoria('Alimentación')
-    } else {
-      setCategoria('Sueldo')
-    }
-
+    setCategoria(tipo === 'gasto' ? 'Alimentación' : 'Sueldo')
     setFecha(new Date().toISOString().split('T')[0])
   }
 
@@ -274,20 +268,25 @@ function App() {
             Registra un gasto para ver el resumen por categoría.
           </p>
         ) : (
-          <div className="lista">
+          <div className="categorias-resumen">
             {gastosPorCategoria.map((item) => (
-              <article className="movimiento" key={item.nombre}>
-                <div className="movimiento-info">
+              <div className="categoria-resumen" key={item.nombre}>
+                <div className="categoria-texto">
                   <strong>{item.nombre}</strong>
-                  <span>{item.porcentaje}% de tus gastos</span>
+                  <span>
+                    {formatoDinero(item.total)} · {item.porcentaje}%
+                  </span>
                 </div>
 
-                <div className="movimiento-derecha">
-                  <strong className="cantidad gasto">
-                    {formatoDinero(item.total)}
-                  </strong>
+                <div className="barra-categoria">
+                  <div
+                    className="barra-categoria-interior"
+                    style={{
+                      width: `${Math.min(item.porcentaje, 100)}%`,
+                    }}
+                  />
                 </div>
-              </article>
+              </div>
             ))}
           </div>
         )}
