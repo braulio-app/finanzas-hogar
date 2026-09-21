@@ -161,10 +161,27 @@ function diferenciaMeses(desde, hasta) {
   )
 }
 
+function descargarArchivo(contenido, nombre, tipo) {
+  const blob = new Blob([contenido], {
+    type: tipo,
+  })
+
+  const url = URL.createObjectURL(blob)
+  const enlace = document.createElement('a')
+
+  enlace.href = url
+  enlace.download = nombre
+
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+
+  URL.revokeObjectURL(url)
+}
+
 function App() {
   const [modoOscuro, setModoOscuro] = useState(
-    () =>
-      localStorage.getItem('modoOscuro') === 'true'
+    () => localStorage.getItem('modoOscuro') === 'true'
   )
 
   const [movimientos, setMovimientos] = useState(
@@ -263,7 +280,9 @@ function App() {
       localStorage.getItem(
         'finanzas_mes_seleccionado'
       ) ||
-      localStorage.getItem('mesSeleccionado')
+      localStorage.getItem(
+        'mesSeleccionado'
+      )
 
     if (
       guardado &&
@@ -383,6 +402,7 @@ function App() {
   ] = useState(null)
 
   const formularioRef = useRef(null)
+  const archivoRespaldoRef = useRef(null)
 
   const calendario10Anos = useMemo(
     () =>
@@ -517,7 +537,9 @@ function App() {
             .reduce(
               (total, movimiento) =>
                 total +
-                Number(movimiento.monto),
+                Number(
+                  movimiento.monto
+                ),
               0
             )
 
@@ -530,7 +552,9 @@ function App() {
             .reduce(
               (total, movimiento) =>
                 total +
-                Number(movimiento.monto),
+                Number(
+                  movimiento.monto
+                ),
               0
             )
 
@@ -606,50 +630,48 @@ function App() {
 
   const gastosPorCategoria =
     categoriasGasto
-      .map(
-        (nombreCategoria) => {
-          const total =
-            movimientosMes
-              .filter(
-                (movimiento) =>
-                  movimiento.tipo ===
-                    'gasto' &&
-                  movimiento.categoria ===
-                    nombreCategoria
-              )
-              .reduce(
-                (suma, movimiento) =>
-                  suma +
-                  Number(
-                    movimiento.monto
-                  ),
-                0
-              )
+      .map((nombreCategoria) => {
+        const total =
+          movimientosMes
+            .filter(
+              (movimiento) =>
+                movimiento.tipo ===
+                  'gasto' &&
+                movimiento.categoria ===
+                  nombreCategoria
+            )
+            .reduce(
+              (suma, movimiento) =>
+                suma +
+                Number(
+                  movimiento.monto
+                ),
+              0
+            )
 
-          return {
-            nombre:
-              nombreCategoria,
-            total,
-            porcentaje:
-              datosActuales.gastos > 0
-                ? Math.round(
-                    (total /
-                      datosActuales.gastos) *
-                      100
-                  )
-                : 0,
-            porcentajeExacto:
-              datosActuales.gastos > 0
-                ? (total /
+        return {
+          nombre: nombreCategoria,
+          total,
+
+          porcentaje:
+            datosActuales.gastos > 0
+              ? Math.round(
+                  (total /
                     datosActuales.gastos) *
-                  100
-                : 0,
-          }
+                    100
+                )
+              : 0,
+
+          porcentajeExacto:
+            datosActuales.gastos > 0
+              ? (total /
+                  datosActuales.gastos) *
+                100
+              : 0,
         }
-      )
+      })
       .filter(
-        (item) =>
-          item.total > 0
+        (item) => item.total > 0
       )
       .sort(
         (a, b) =>
@@ -690,7 +712,12 @@ function App() {
       : '#dce8e2'
 
   const mesesGrafico =
-    mesesOrdenados.slice(-6)
+    mesesOrdenados
+      .filter(
+        (mes) =>
+          mes <= mesSeleccionado
+      )
+      .slice(-6)
 
   const mayorMovimientoGrafico =
     Math.max(
@@ -997,8 +1024,7 @@ function App() {
 
   const abrirNuevoMes = () => {
     if (
-      opcionesMesNuevo.length ===
-      0
+      opcionesMesNuevo.length === 0
     ) {
       alert(
         'Has llegado al límite del calendario actual de 10 años.'
@@ -1064,9 +1090,7 @@ function App() {
     setMonto('')
     setEditandoId(null)
     setTipo('gasto')
-    setCategoria(
-      'Alimentación'
-    )
+    setCategoria('Alimentación')
 
     if (mes) {
       setFecha(
@@ -1259,39 +1283,38 @@ function App() {
     }
   }
 
-  const deshacerEliminacion =
-    () => {
-      if (!ultimoEliminado) {
-        return
-      }
+  const deshacerEliminacion = () => {
+    if (!ultimoEliminado) {
+      return
+    }
 
-      setMovimientos(
-        (actuales) => {
-          const copia = [
-            ...actuales,
-          ]
+    setMovimientos(
+      (actuales) => {
+        const copia = [
+          ...actuales,
+        ]
 
-          const posicion =
-            Math.min(
-              Math.max(
-                ultimoEliminado.indice,
-                0
-              ),
-              copia.length
-            )
-
-          copia.splice(
-            posicion,
-            0,
-            ultimoEliminado.movimiento
+        const posicion =
+          Math.min(
+            Math.max(
+              ultimoEliminado.indice,
+              0
+            ),
+            copia.length
           )
 
-          return copia
-        }
-      )
+        copia.splice(
+          posicion,
+          0,
+          ultimoEliminado.movimiento
+        )
 
-      setUltimoEliminado(null)
-    }
+        return copia
+      }
+    )
+
+    setUltimoEliminado(null)
+  }
 
   const actualizarLimite = (
     nombreCategoria,
@@ -1314,6 +1337,239 @@ function App() {
             Number(valor) || 0,
         },
       })
+    )
+  }
+
+  const descargarRespaldo = () => {
+    const respaldo = {
+      tipo: 'finanzas-hogar-respaldo',
+      version: 1,
+      creado: new Date().toISOString(),
+
+      datos: {
+        movimientos,
+        meses: mesesOrdenados,
+        saldoInicialBase,
+        mesSeleccionado,
+        metasPorMes,
+        limitesPorMes,
+        modoOscuro,
+
+        ultimoMesReal:
+          localStorage.getItem(
+            'finanzas_ultimo_mes_real'
+          ) || mesActualReal(),
+      },
+    }
+
+    const contenido = JSON.stringify(
+      respaldo,
+      null,
+      2
+    )
+
+    descargarArchivo(
+      contenido,
+      `respaldo-finanzas-hogar-${fechaLocal()}.json`,
+      'application/json;charset=utf-8'
+    )
+  }
+
+  const seleccionarRespaldo = () => {
+    archivoRespaldoRef.current?.click()
+  }
+
+  const restaurarRespaldo = (
+    evento
+  ) => {
+    const archivo =
+      evento.target.files?.[0]
+
+    if (!archivo) {
+      return
+    }
+
+    const lector = new FileReader()
+
+    lector.onload = () => {
+      try {
+        const respaldo = JSON.parse(
+          lector.result
+        )
+
+        if (
+          respaldo?.tipo !==
+            'finanzas-hogar-respaldo' ||
+          !respaldo?.datos ||
+          !Array.isArray(
+            respaldo.datos.movimientos
+          ) ||
+          !Array.isArray(
+            respaldo.datos.meses
+          )
+        ) {
+          alert(
+            'Este archivo no parece ser una copia válida de Finanzas del Hogar.'
+          )
+
+          evento.target.value = ''
+          return
+        }
+
+        const confirmar =
+          window.confirm(
+            'Restaurar esta copia reemplazará los datos actuales de la aplicación. ¿Quieres continuar?'
+          )
+
+        if (!confirmar) {
+          evento.target.value = ''
+          return
+        }
+
+        const datos =
+          respaldo.datos
+
+        localStorage.setItem(
+          'movimientos',
+          JSON.stringify(
+            datos.movimientos
+          )
+        )
+
+        localStorage.setItem(
+          'finanzas_meses',
+          JSON.stringify(
+            completarMeses(
+              datos.meses
+            )
+          )
+        )
+
+        localStorage.setItem(
+          'finanzas_saldo_inicial',
+          Number(
+            datos.saldoInicialBase
+          ) || 0
+        )
+
+        localStorage.setItem(
+          'finanzas_metas_por_mes',
+          JSON.stringify(
+            datos.metasPorMes || {}
+          )
+        )
+
+        localStorage.setItem(
+          'finanzas_limites_por_mes',
+          JSON.stringify(
+            datos.limitesPorMes || {}
+          )
+        )
+
+        localStorage.setItem(
+          'modoOscuro',
+          Boolean(
+            datos.modoOscuro
+          )
+        )
+
+        const mesesRestaurados =
+          completarMeses(
+            datos.meses
+          )
+
+        const mesRestaurado =
+          mesesRestaurados.includes(
+            datos.mesSeleccionado
+          )
+            ? datos.mesSeleccionado
+            : mesesRestaurados.at(-1)
+
+        if (mesRestaurado) {
+          localStorage.setItem(
+            'finanzas_mes_seleccionado',
+            mesRestaurado
+          )
+        }
+
+        localStorage.setItem(
+          'finanzas_ultimo_mes_real',
+          datos.ultimoMesReal ||
+            mesActualReal()
+        )
+
+        alert(
+          'Copia restaurada correctamente. La aplicación se recargará ahora.'
+        )
+
+        window.location.reload()
+      } catch {
+        alert(
+          'No se pudo leer el archivo. Comprueba que sea una copia de seguridad válida.'
+        )
+
+        evento.target.value = ''
+      }
+    }
+
+    lector.readAsText(archivo)
+  }
+
+  const exportarCSV = () => {
+    if (movimientos.length === 0) {
+      alert(
+        'Todavía no hay movimientos para exportar.'
+      )
+      return
+    }
+
+    const limpiar = (valor) =>
+      `"${String(valor ?? '')
+        .replaceAll('"', '""')}"`
+
+    const filas = [
+      [
+        'Fecha',
+        'Tipo',
+        'Nombre',
+        'Categoría',
+        'Monto',
+      ],
+      ...[...movimientos]
+        .sort(
+          (a, b) =>
+            String(a.fecha).localeCompare(
+              String(b.fecha)
+            )
+        )
+        .map(
+          (movimiento) => [
+            movimiento.fecha,
+            movimiento.tipo ===
+            'gasto'
+              ? 'Gasto'
+              : 'Ingreso',
+            movimiento.nombre,
+            movimiento.categoria,
+            Number(
+              movimiento.monto
+            ) || 0,
+          ]
+        ),
+    ]
+
+    const csv = filas
+      .map((fila) =>
+        fila
+          .map(limpiar)
+          .join(';')
+      )
+      .join('\n')
+
+    descargarArchivo(
+      `\uFEFF${csv}`,
+      `movimientos-finanzas-${fechaLocal()}.csv`,
+      'text/csv;charset=utf-8'
     )
   }
 
@@ -1477,8 +1733,7 @@ function App() {
           <button
             type="button"
             className={
-              seccion ===
-              'movimientos'
+              seccion === 'movimientos'
                 ? 'activo'
                 : ''
             }
@@ -1494,8 +1749,7 @@ function App() {
           <button
             type="button"
             className={
-              seccion ===
-              'planificacion'
+              seccion === 'planificacion'
                 ? 'activo'
                 : ''
             }
@@ -1537,16 +1791,6 @@ function App() {
                 )}
               </h2>
             </div>
-
-            <button
-              type="button"
-              className="boton-nuevo-mes"
-              onClick={
-                abrirNuevoMes
-              }
-            >
-              ＋ Nuevo mes
-            </button>
           </div>
 
           <div className="navegacion-meses">
@@ -1562,6 +1806,7 @@ function App() {
                   mesAnterior
                 )
               }
+              aria-label="Ver mes anterior"
             >
               ‹
             </button>
@@ -1575,6 +1820,7 @@ function App() {
                   e.target.value
                 )
               }
+              aria-label="Elegir mes"
             >
               {mesesOrdenados.map(
                 (mes) => (
@@ -1602,6 +1848,7 @@ function App() {
                   mesSiguiente
                 )
               }
+              aria-label="Ver mes siguiente"
             >
               ›
             </button>
@@ -2147,6 +2394,7 @@ function App() {
                           <button
                             className="editar"
                             type="button"
+                            aria-label={`Editar ${movimiento.nombre}`}
                             onClick={() =>
                               editarMovimiento(
                                 movimiento
@@ -2159,6 +2407,7 @@ function App() {
                           <button
                             className="eliminar"
                             type="button"
+                            aria-label={`Eliminar ${movimiento.nombre}`}
                             onClick={() =>
                               eliminarMovimiento(
                                 movimiento
@@ -2589,9 +2838,10 @@ function App() {
                 📆 Calendario automático
               </h2>
 
-              <p>
+              <p className="subtitulo-panel">
                 La aplicación reconoce automáticamente los cambios
                 de mes usando la fecha de tu dispositivo.
+                No necesitas crear cada mes manualmente.
               </p>
 
               <p>
@@ -2603,6 +2853,21 @@ function App() {
                 </strong>
                 .
               </p>
+
+              <p>
+                Si quieres organizar con anticipación un mes que
+                todavía no comienza, puedes prepararlo desde aquí.
+              </p>
+
+              <button
+                type="button"
+                className="boton-secundario boton-grande"
+                onClick={
+                  abrirNuevoMes
+                }
+              >
+                📅 Preparar un mes futuro
+              </button>
             </section>
 
             <section className="panel">
@@ -2612,7 +2877,8 @@ function App() {
 
               <p className="subtitulo-panel">
                 Si te equivocaste al comenzar, puedes corregir aquí
-                el dinero inicial. Los meses posteriores se recalcularán.
+                el dinero inicial. Los meses posteriores se recalcularán
+                automáticamente.
               </p>
 
               <div className="campo-presupuesto">
@@ -2637,13 +2903,89 @@ function App() {
 
             <section className="panel aviso-datos">
               <h2>
-                💾 Tus datos
+                💾 Copia de seguridad
               </h2>
 
               <p>
-                Por ahora tus movimientos se guardan en este navegador.
-                En una etapa posterior añadiremos respaldo,
-                exportación y sincronización.
+                Descarga una copia completa de tus movimientos,
+                meses, metas y límites. Guarda este archivo en un
+                lugar seguro.
+              </p>
+
+              <button
+                type="button"
+                className="guardar"
+                onClick={
+                  descargarRespaldo
+                }
+              >
+                💾 Descargar copia de seguridad
+              </button>
+
+              <button
+                type="button"
+                className="boton-secundario boton-grande"
+                onClick={
+                  seleccionarRespaldo
+                }
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                }}
+              >
+                ♻️ Restaurar una copia
+              </button>
+
+              <input
+                ref={
+                  archivoRespaldoRef
+                }
+                type="file"
+                accept=".json,application/json"
+                onChange={
+                  restaurarRespaldo
+                }
+                style={{
+                  display: 'none',
+                }}
+              />
+
+              <p className="ayuda-campo">
+                Restaurar una copia reemplaza los datos actuales,
+                pero la aplicación siempre pedirá confirmación antes.
+              </p>
+            </section>
+
+            <section className="panel">
+              <h2>
+                📄 Exportar movimientos
+              </h2>
+
+              <p className="subtitulo-panel">
+                Descarga tus movimientos en un archivo CSV que
+                puedes abrir con Excel u otras hojas de cálculo.
+              </p>
+
+              <button
+                type="button"
+                className="boton-secundario boton-grande"
+                onClick={
+                  exportarCSV
+                }
+              >
+                📄 Exportar movimientos a CSV
+              </button>
+            </section>
+
+            <section className="panel aviso-datos">
+              <h2>
+                🔐 Dónde están tus datos
+              </h2>
+
+              <p>
+                La aplicación continúa guardando tus datos en este
+                navegador. Por eso es recomendable descargar una
+                copia de seguridad regularmente.
               </p>
             </section>
           </>
@@ -2661,17 +3003,18 @@ function App() {
                   false
                 )
               }
+              aria-label="Cerrar"
             >
               ✕
             </button>
 
             <h2>
-              📅 Preparar otro mes
+              📅 Preparar un mes futuro
             </h2>
 
             <p>
-              Esto es opcional. Cuando cambie el mes real,
-              la aplicación también puede hacerlo automáticamente.
+              Esta función es opcional. La aplicación cambiará
+              automáticamente de mes cuando llegue la fecha.
             </p>
 
             <label>
@@ -2716,6 +3059,15 @@ function App() {
                 </strong>
               </div>
             )}
+
+            {mesNuevo &&
+              mesNuevo !==
+                proximoMes && (
+                <p className="consejo-ayuda">
+                  💡 Los meses intermedios también se prepararán
+                  automáticamente.
+                </p>
+              )}
 
             <button
               className="guardar"
@@ -2780,6 +3132,13 @@ function App() {
               del nuevo mes.
             </p>
 
+            {notificacionMes.mesesPasados > 1 && (
+              <p className="consejo-ayuda">
+                La aplicación detectó que pasaron varios meses y
+                preparó los meses intermedios automáticamente.
+              </p>
+            )}
+
             <button
               className="guardar"
               type="button"
@@ -2806,6 +3165,7 @@ function App() {
                   false
                 )
               }
+              aria-label="Cerrar ayuda"
             >
               ✕
             </button>
@@ -2816,47 +3176,67 @@ function App() {
 
             <div className="instrucciones">
               <p>
-                <strong>🏠 Inicio:</strong>{' '}
-                mira rápidamente cuánto comenzaste,
-                cuánto entró, cuánto gastaste y cuánto te queda.
+                <strong>
+                  🏠 Inicio:
+                </strong>{' '}
+                mira cuánto comenzaste,
+                cuánto entró, cuánto gastaste
+                y cuánto te queda.
               </p>
 
               <p>
-                <strong>🧾 Movimientos:</strong>{' '}
-                registra ingresos y gastos, o corrige movimientos anteriores.
+                <strong>
+                  🧾 Movimientos:
+                </strong>{' '}
+                registra ingresos y gastos,
+                o corrige movimientos anteriores.
               </p>
 
               <p>
-                <strong>🎯 Planificación:</strong>{' '}
-                consulta gráficos, define metas y establece límites de gasto.
+                <strong>
+                  🎯 Planificación:
+                </strong>{' '}
+                consulta gráficos, define metas
+                y establece límites de gasto.
               </p>
 
               <p>
-                <strong>📅 Meses:</strong>{' '}
-                usa las flechas o el selector para consultar otros meses.
+                <strong>
+                  🔄 Cambio automático:
+                </strong>{' '}
+                cuando comience un nuevo mes,
+                la aplicación trasladará automáticamente
+                el dinero que quedó del mes anterior.
               </p>
 
               <p>
-                <strong>🔄 Cambio automático:</strong>{' '}
-                cuando comience un nuevo mes, la aplicación trasladará
-                automáticamente el dinero que quedó del mes anterior.
+                <strong>
+                  💾 Copia de seguridad:
+                </strong>{' '}
+                entra en Más y descarga regularmente
+                una copia completa de tus datos.
               </p>
 
               <p>
-                <strong>✏️ Editar:</strong>{' '}
-                toca el lápiz y la aplicación te llevará al formulario correcto.
+                <strong>
+                  ♻️ Restaurar:
+                </strong>{' '}
+                permite recuperar tus datos usando
+                una copia de seguridad anterior.
               </p>
 
               <p>
-                <strong>🗑️ Eliminar:</strong>{' '}
-                antes de borrar un movimiento tendrás que confirmarlo.
-                Después podrás usar Deshacer unos segundos.
+                <strong>
+                  📄 Exportar:
+                </strong>{' '}
+                crea un archivo CSV de tus movimientos
+                para abrirlo en Excel.
               </p>
             </div>
 
             <p className="consejo-ayuda">
-              💡 Tú registras lo que entra y sale.
-              La aplicación organiza los meses y hace los cálculos.
+              💡 Guarda una copia de seguridad cada cierto tiempo
+              para proteger mejor tus datos.
             </p>
           </div>
         </div>
