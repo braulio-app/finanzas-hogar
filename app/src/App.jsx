@@ -52,8 +52,13 @@ function fechaLocal() {
   const ahora = new Date()
 
   const anio = ahora.getFullYear()
-  const mes = String(ahora.getMonth() + 1).padStart(2, '0')
-  const dia = String(ahora.getDate()).padStart(2, '0')
+  const mes = String(
+    ahora.getMonth() + 1
+  ).padStart(2, '0')
+
+  const dia = String(
+    ahora.getDate()
+  ).padStart(2, '0')
 
   return `${anio}-${mes}-${dia}`
 }
@@ -63,7 +68,8 @@ function mesActualReal() {
 }
 
 function moverMes(mes, cantidad) {
-  const [anio, numeroMes] = mes.split('-').map(Number)
+  const [anio, numeroMes] =
+    mes.split('-').map(Number)
 
   const fecha = new Date(
     anio,
@@ -77,19 +83,26 @@ function moverMes(mes, cantidad) {
 }
 
 function ordenarMeses(lista) {
-  return [...new Set(lista.filter(Boolean))].sort()
+  return [
+    ...new Set(
+      lista.filter(Boolean)
+    ),
+  ].sort()
 }
 
 function completarMeses(lista) {
-  const ordenados = ordenarMeses(lista)
+  const ordenados =
+    ordenarMeses(lista)
 
   if (ordenados.length <= 1) {
     return ordenados
   }
 
   const resultado = []
+
   let actual = ordenados[0]
-  const ultimo = ordenados.at(-1)
+  const ultimo =
+    ordenados.at(-1)
 
   while (actual <= ultimo) {
     resultado.push(actual)
@@ -98,39 +111,65 @@ function completarMeses(lista) {
       break
     }
 
-    actual = moverMes(actual, 1)
+    actual = moverMes(
+      actual,
+      1
+    )
   }
 
   return resultado
 }
 
-function agregarMesesHasta(lista, objetivo) {
-  const ordenados = ordenarMeses(lista)
+function agregarMesesHasta(
+  lista,
+  objetivo
+) {
+  const ordenados =
+    ordenarMeses(lista)
 
   if (ordenados.length === 0) {
     return [objetivo]
   }
 
-  const resultado = [...ordenados]
-  let ultimo = resultado.at(-1)
+  const resultado = [
+    ...ordenados,
+  ]
+
+  let ultimo =
+    resultado.at(-1)
 
   while (ultimo < objetivo) {
-    ultimo = moverMes(ultimo, 1)
+    ultimo = moverMes(
+      ultimo,
+      1
+    )
+
     resultado.push(ultimo)
   }
 
   return resultado
 }
 
-function generarCalendario(primerMes, cantidadMeses) {
+function generarCalendario(
+  primerMes,
+  cantidadMeses
+) {
   return Array.from(
-    { length: cantidadMeses },
-    (_, indice) => moverMes(primerMes, indice)
+    {
+      length:
+        cantidadMeses,
+    },
+    (_, indice) =>
+      moverMes(
+        primerMes,
+        indice
+      )
   )
 }
 
 function ultimoDiaDelMes(mes) {
-  const [anio, numeroMes] = mes.split('-').map(Number)
+  const [anio, numeroMes] =
+    mes.split('-').map(Number)
 
   const dia = new Date(
     anio,
@@ -138,7 +177,9 @@ function ultimoDiaDelMes(mes) {
     0
   ).getDate()
 
-  return `${mes}-${String(dia).padStart(2, '0')}`
+  return `${mes}-${String(
+    dia
+  ).padStart(2, '0')}`
 }
 
 function fechaParaMes(mes) {
@@ -151,28 +192,52 @@ function fechaParaMes(mes) {
   return `${mes}-01`
 }
 
-function diferenciaMeses(desde, hasta) {
-  const [anio1, mes1] = desde.split('-').map(Number)
-  const [anio2, mes2] = hasta.split('-').map(Number)
+function diferenciaMeses(
+  desde,
+  hasta
+) {
+  const [anio1, mes1] =
+    desde.split('-').map(Number)
+
+  const [anio2, mes2] =
+    hasta.split('-').map(Number)
 
   return (
-    (anio2 - anio1) * 12 +
+    (anio2 - anio1) *
+      12 +
     (mes2 - mes1)
   )
 }
 
-function descargarArchivo(contenido, nombre, tipo) {
-  const blob = new Blob([contenido], {
-    type: tipo,
-  })
+function descargarArchivo(
+  contenido,
+  nombre,
+  tipo
+) {
+  const blob = new Blob(
+    [contenido],
+    {
+      type: tipo,
+    }
+  )
 
-  const url = URL.createObjectURL(blob)
-  const enlace = document.createElement('a')
+  const url =
+    URL.createObjectURL(
+      blob
+    )
+
+  const enlace =
+    document.createElement(
+      'a'
+    )
 
   enlace.href = url
   enlace.download = nombre
 
-  document.body.appendChild(enlace)
+  document.body.appendChild(
+    enlace
+  )
+
   enlace.click()
   enlace.remove()
 
@@ -180,51 +245,87 @@ function descargarArchivo(contenido, nombre, tipo) {
 }
 
 function App() {
-  const [modoOscuro, setModoOscuro] = useState(
-    () => localStorage.getItem('modoOscuro') === 'true'
+  const [
+    modoOscuro,
+    setModoOscuro,
+  ] = useState(
+    () =>
+      localStorage.getItem(
+        'modoOscuro'
+      ) === 'true'
   )
 
-  const [movimientos, setMovimientos] = useState(
-    () => leerJSON('movimientos', [])
+  const [
+    movimientos,
+    setMovimientos,
+  ] = useState(
+    () =>
+      leerJSON(
+        'movimientos',
+        []
+      )
   )
 
-  const [meses, setMeses] = useState(() => {
-    const nuevos = leerJSON(
-      'finanzas_meses',
-      null
-    )
+  const [
+    meses,
+    setMeses,
+  ] = useState(() => {
+    const nuevos =
+      leerJSON(
+        'finanzas_meses',
+        null
+      )
 
     if (
       Array.isArray(nuevos) &&
       nuevos.length > 0
     ) {
-      return completarMeses(nuevos)
+      return completarMeses(
+        nuevos
+      )
     }
 
-    const mesesViejos = leerJSON(
-      'meses',
-      {}
-    )
+    const mesesViejos =
+      leerJSON(
+        'meses',
+        {}
+      )
 
     const lista = [
-      ...Object.keys(mesesViejos || {}),
-      ...movimientos.map((movimiento) =>
-        movimiento.fecha?.slice(0, 7)
+      ...Object.keys(
+        mesesViejos || {}
+      ),
+
+      ...movimientos.map(
+        (movimiento) =>
+          movimiento.fecha?.slice(
+            0,
+            7
+          )
       ),
     ]
 
-    const encontrados = completarMeses(lista)
+    const encontrados =
+      completarMeses(
+        lista
+      )
 
-    if (encontrados.length > 0) {
+    if (
+      encontrados.length >
+      0
+    ) {
       return encontrados
     }
 
     const presupuestoViejo =
       Number(
-        localStorage.getItem('presupuesto')
+        localStorage.getItem(
+          'presupuesto'
+        )
       ) || 0
 
-    return presupuestoViejo > 0
+    return presupuestoViejo >
+      0
       ? [mesActualReal()]
       : []
   })
@@ -233,28 +334,38 @@ function App() {
     saldoInicialBase,
     setSaldoInicialBase,
   ] = useState(() => {
-    const nuevo = localStorage.getItem(
-      'finanzas_saldo_inicial'
-    )
+    const nuevo =
+      localStorage.getItem(
+        'finanzas_saldo_inicial'
+      )
 
     if (nuevo !== null) {
-      return Number(nuevo) || 0
+      return (
+        Number(nuevo) || 0
+      )
     }
 
-    const mesesViejos = leerJSON(
-      'meses',
-      {}
-    )
+    const mesesViejos =
+      leerJSON(
+        'meses',
+        {}
+      )
 
-    const primerMes = ordenarMeses(
-      Object.keys(mesesViejos || {})
-    )[0]
+    const primerMes =
+      ordenarMeses(
+        Object.keys(
+          mesesViejos || {}
+        )
+      )[0]
 
-    const valorViejo = primerMes
-      ? Number(
-          mesesViejos[primerMes]?.dineroInicial
-        ) || 0
-      : 0
+    const valorViejo =
+      primerMes
+        ? Number(
+            mesesViejos[
+              primerMes
+            ]?.dineroInicial
+          ) || 0
+        : 0
 
     if (valorViejo > 0) {
       return valorViejo
@@ -262,15 +373,30 @@ function App() {
 
     return (
       Number(
-        localStorage.getItem('presupuesto')
+        localStorage.getItem(
+          'presupuesto'
+        )
       ) || 0
     )
   })
 
-  const mesesOrdenados = useMemo(
-    () => ordenarMeses(meses),
-    [meses]
+  const [
+    saldoInicialEdicion,
+    setSaldoInicialEdicion,
+  ] = useState(() =>
+    String(
+      saldoInicialBase
+    )
   )
+
+  const mesesOrdenados =
+    useMemo(
+      () =>
+        ordenarMeses(
+          meses
+        ),
+      [meses]
+    )
 
   const [
     mesSeleccionado,
@@ -286,17 +412,26 @@ function App() {
 
     if (
       guardado &&
-      guardado !== 'todos' &&
-      meses.includes(guardado)
+      guardado !==
+        'todos' &&
+      meses.includes(
+        guardado
+      )
     ) {
       return guardado
     }
 
-    return ordenarMeses(meses).at(-1) || ''
+    return (
+      ordenarMeses(
+        meses
+      ).at(-1) || ''
+    )
   })
 
-  const [seccion, setSeccion] =
-    useState('inicio')
+  const [
+    seccion,
+    setSeccion,
+  ] = useState('inicio')
 
   const [
     mostrarAyuda,
@@ -304,12 +439,24 @@ function App() {
   ] = useState(false)
 
   const [
+    mostrarGuiaInicial,
+    setMostrarGuiaInicial,
+  ] = useState(
+    () =>
+      localStorage.getItem(
+        'finanzas_guia_inicial_vista'
+      ) !== 'true'
+  )
+
+  const [
     mostrarNuevoMes,
     setMostrarNuevoMes,
   ] = useState(false)
 
-  const [mesNuevo, setMesNuevo] =
-    useState('')
+  const [
+    mesNuevo,
+    setMesNuevo,
+  ] = useState('')
 
   const [
     notificacionMes,
@@ -321,8 +468,12 @@ function App() {
     setUltimoEliminado,
   ] = useState(null)
 
-  const [mesInicio, setMesInicio] =
-    useState(mesActualReal())
+  const [
+    mesInicio,
+    setMesInicio,
+  ] = useState(
+    mesActualReal()
+  )
 
   const [
     dineroInicio,
@@ -333,10 +484,11 @@ function App() {
     metasPorMes,
     setMetasPorMes,
   ] = useState(() => {
-    const nuevas = leerJSON(
-      'finanzas_metas_por_mes',
-      null
-    )
+    const nuevas =
+      leerJSON(
+        'finanzas_metas_por_mes',
+        null
+      )
 
     if (nuevas) {
       return nuevas
@@ -344,11 +496,16 @@ function App() {
 
     const vieja =
       Number(
-        localStorage.getItem('metaAhorro')
+        localStorage.getItem(
+          'metaAhorro'
+        )
       ) || 0
 
     return vieja > 0
-      ? { __legacy__: vieja }
+      ? {
+          __legacy__:
+            vieja,
+        }
       : {}
   })
 
@@ -356,62 +513,85 @@ function App() {
     limitesPorMes,
     setLimitesPorMes,
   ] = useState(() => {
-    const nuevos = leerJSON(
-      'finanzas_limites_por_mes',
-      null
-    )
+    const nuevos =
+      leerJSON(
+        'finanzas_limites_por_mes',
+        null
+      )
 
     if (nuevos) {
       return nuevos
     }
 
-    const viejos = leerJSON(
-      'presupuestoCategorias',
-      {}
-    )
+    const viejos =
+      leerJSON(
+        'presupuestoCategorias',
+        {}
+      )
 
-    return Object.keys(viejos).length > 0
-      ? { __legacy__: viejos }
+    return Object.keys(
+      viejos
+    ).length > 0
+      ? {
+          __legacy__:
+            viejos,
+        }
       : {}
   })
 
-  const [tipo, setTipo] =
-    useState('gasto')
+  const [
+    tipo,
+    setTipo,
+  ] = useState('gasto')
 
-  const [nombre, setNombre] =
-    useState('')
+  const [
+    nombre,
+    setNombre,
+  ] = useState('')
 
-  const [monto, setMonto] =
-    useState('')
+  const [
+    monto,
+    setMonto,
+  ] = useState('')
 
   const [
     categoria,
     setCategoria,
-  ] = useState('Alimentación')
+  ] = useState(
+    'Alimentación'
+  )
 
-  const [fecha, setFecha] =
-    useState(() =>
-      mesSeleccionado
-        ? fechaParaMes(mesSeleccionado)
-        : fechaLocal()
-    )
+  const [
+    fecha,
+    setFecha,
+  ] = useState(() =>
+    mesSeleccionado
+      ? fechaParaMes(
+          mesSeleccionado
+        )
+      : fechaLocal()
+  )
 
   const [
     editandoId,
     setEditandoId,
   ] = useState(null)
 
-  const formularioRef = useRef(null)
-  const archivoRespaldoRef = useRef(null)
+  const formularioRef =
+    useRef(null)
 
-  const calendario10Anos = useMemo(
-    () =>
-      generarCalendario(
-        mesActualReal(),
-        120
-      ),
-    []
-  )
+  const archivoRespaldoRef =
+    useRef(null)
+
+  const calendario10Anos =
+    useMemo(
+      () =>
+        generarCalendario(
+          mesActualReal(),
+          120
+        ),
+      []
+    )
 
   const ultimoMesCalendario =
     calendario10Anos.at(-1)
@@ -426,14 +606,18 @@ function App() {
   useEffect(() => {
     localStorage.setItem(
       'movimientos',
-      JSON.stringify(movimientos)
+      JSON.stringify(
+        movimientos
+      )
     )
   }, [movimientos])
 
   useEffect(() => {
     localStorage.setItem(
       'finanzas_meses',
-      JSON.stringify(mesesOrdenados)
+      JSON.stringify(
+        mesesOrdenados
+      )
     )
   }, [mesesOrdenados])
 
@@ -445,7 +629,17 @@ function App() {
   }, [saldoInicialBase])
 
   useEffect(() => {
-    if (mesSeleccionado) {
+    setSaldoInicialEdicion(
+      String(
+        saldoInicialBase
+      )
+    )
+  }, [saldoInicialBase])
+
+  useEffect(() => {
+    if (
+      mesSeleccionado
+    ) {
       localStorage.setItem(
         'finanzas_mes_seleccionado',
         mesSeleccionado
@@ -456,42 +650,56 @@ function App() {
   useEffect(() => {
     localStorage.setItem(
       'finanzas_metas_por_mes',
-      JSON.stringify(metasPorMes)
+      JSON.stringify(
+        metasPorMes
+      )
     )
   }, [metasPorMes])
 
   useEffect(() => {
     localStorage.setItem(
       'finanzas_limites_por_mes',
-      JSON.stringify(limitesPorMes)
+      JSON.stringify(
+        limitesPorMes
+      )
     )
   }, [limitesPorMes])
 
   useEffect(() => {
-    if (!ultimoEliminado) {
+    if (
+      !ultimoEliminado
+    ) {
       return undefined
     }
 
-    const temporizador = setTimeout(
-      () => {
-        setUltimoEliminado(null)
-      },
-      6000
-    )
+    const temporizador =
+      setTimeout(
+        () => {
+          setUltimoEliminado(
+            null
+          )
+        },
+        6000
+      )
 
     return () =>
-      clearTimeout(temporizador)
+      clearTimeout(
+        temporizador
+      )
   }, [ultimoEliminado])
 
   useEffect(() => {
     if (
-      mesesOrdenados.length > 0 &&
+      mesesOrdenados.length >
+        0 &&
       !mesesOrdenados.includes(
         mesSeleccionado
       )
     ) {
       setMesSeleccionado(
-        mesesOrdenados.at(-1)
+        mesesOrdenados.at(
+          -1
+        )
       )
     }
   }, [
@@ -515,78 +723,100 @@ function App() {
     editandoId,
   ])
 
-  const datosMeses = useMemo(() => {
-    const resultado = {}
+  const datosMeses =
+    useMemo(() => {
+      const resultado = {}
 
-    mesesOrdenados.forEach(
-      (mes, indice) => {
-        const movimientosMes =
-          movimientos.filter(
-            (movimiento) =>
-              movimiento.fecha?.startsWith(
-                mes
+      mesesOrdenados.forEach(
+        (
+          mes,
+          indice
+        ) => {
+          const movimientosMes =
+            movimientos.filter(
+              (
+                movimiento
+              ) =>
+                movimiento.fecha?.startsWith(
+                  mes
+                )
+            )
+
+          const ingresos =
+            movimientosMes
+              .filter(
+                (
+                  movimiento
+                ) =>
+                  movimiento.tipo ===
+                  'ingreso'
               )
-          )
+              .reduce(
+                (
+                  total,
+                  movimiento
+                ) =>
+                  total +
+                  Number(
+                    movimiento.monto
+                  ),
+                0
+              )
 
-        const ingresos =
-          movimientosMes
-            .filter(
-              (movimiento) =>
-                movimiento.tipo === 'ingreso'
-            )
-            .reduce(
-              (total, movimiento) =>
-                total +
-                Number(
-                  movimiento.monto
-                ),
-              0
-            )
+          const gastos =
+            movimientosMes
+              .filter(
+                (
+                  movimiento
+                ) =>
+                  movimiento.tipo ===
+                  'gasto'
+              )
+              .reduce(
+                (
+                  total,
+                  movimiento
+                ) =>
+                  total +
+                  Number(
+                    movimiento.monto
+                  ),
+                0
+              )
 
-        const gastos =
-          movimientosMes
-            .filter(
-              (movimiento) =>
-                movimiento.tipo === 'gasto'
-            )
-            .reduce(
-              (total, movimiento) =>
-                total +
-                Number(
-                  movimiento.monto
-                ),
-              0
-            )
+          const saldoInicial =
+            indice === 0
+              ? saldoInicialBase
+              : resultado[
+                  mesesOrdenados[
+                    indice -
+                      1
+                  ]
+                ].saldoFinal
 
-        const saldoInicial =
-          indice === 0
-            ? saldoInicialBase
-            : resultado[
-                mesesOrdenados[
-                  indice - 1
-                ]
-              ].saldoFinal
-
-        resultado[mes] = {
-          saldoInicial,
-          ingresos,
-          gastos,
-          diferencia:
-            ingresos - gastos,
-          saldoFinal:
-            saldoInicial +
-            ingresos -
+          resultado[mes] = {
+            saldoInicial,
+            ingresos,
             gastos,
-        }
-      }
-    )
 
-    return resultado
-  }, [
-    mesesOrdenados,
-    movimientos,
-    saldoInicialBase,
-  ])
+            diferencia:
+              ingresos -
+              gastos,
+
+            saldoFinal:
+              saldoInicial +
+              ingresos -
+              gastos,
+          }
+        }
+      )
+
+      return resultado
+    }, [
+      mesesOrdenados,
+      movimientos,
+      saldoInicialBase,
+    ])
 
   const datosActuales =
     datosMeses[
@@ -614,72 +844,111 @@ function App() {
   const mesSiguiente =
     indiceMes >= 0 &&
     indiceMes <
-      mesesOrdenados.length - 1
+      mesesOrdenados.length -
+        1
       ? mesesOrdenados[
           indiceMes + 1
         ]
       : null
 
   const movimientosMes =
-    movimientos.filter(
-      (movimiento) =>
-        movimiento.fecha?.startsWith(
-          mesSeleccionado
+    movimientos
+      .filter(
+        (movimiento) =>
+          movimiento.fecha?.startsWith(
+            mesSeleccionado
+          )
+      )
+      .sort((a, b) => {
+        const porFecha =
+          String(
+            b.fecha
+          ).localeCompare(
+            String(
+              a.fecha
+            )
+          )
+
+        if (
+          porFecha !== 0
+        ) {
+          return porFecha
+        }
+
+        return (
+          Number(b.id) -
+          Number(a.id)
         )
-    )
+      })
 
   const gastosPorCategoria =
     categoriasGasto
-      .map((nombreCategoria) => {
-        const total =
-          movimientosMes
-            .filter(
-              (movimiento) =>
-                movimiento.tipo ===
-                  'gasto' &&
-                movimiento.categoria ===
-                  nombreCategoria
-            )
-            .reduce(
-              (suma, movimiento) =>
-                suma +
-                Number(
-                  movimiento.monto
-                ),
+      .map(
+        (
+          nombreCategoria
+        ) => {
+          const total =
+            movimientosMes
+              .filter(
+                (
+                  movimiento
+                ) =>
+                  movimiento.tipo ===
+                    'gasto' &&
+                  movimiento.categoria ===
+                    nombreCategoria
+              )
+              .reduce(
+                (
+                  suma,
+                  movimiento
+                ) =>
+                  suma +
+                  Number(
+                    movimiento.monto
+                  ),
+                0
+              )
+
+          return {
+            nombre:
+              nombreCategoria,
+
+            total,
+
+            porcentaje:
+              datosActuales.gastos >
               0
-            )
+                ? Math.round(
+                    (total /
+                      datosActuales.gastos) *
+                      100
+                  )
+                : 0,
 
-        return {
-          nombre: nombreCategoria,
-          total,
-
-          porcentaje:
-            datosActuales.gastos > 0
-              ? Math.round(
-                  (total /
+            porcentajeExacto:
+              datosActuales.gastos >
+              0
+                ? (total /
                     datosActuales.gastos) *
-                    100
-                )
-              : 0,
-
-          porcentajeExacto:
-            datosActuales.gastos > 0
-              ? (total /
-                  datosActuales.gastos) *
-                100
-              : 0,
+                  100
+                : 0,
+          }
         }
-      })
+      )
       .filter(
-        (item) => item.total > 0
+        (item) =>
+          item.total > 0
       )
       .sort(
         (a, b) =>
-          b.total - a.total
+          b.total -
+          a.total
       )
 
   const categoriaPrincipal =
-    gastosPorCategoria[0] || null
+    gastosPorCategoria[0] ||
+    null
 
   let acumuladoGrafico = 0
 
@@ -705,7 +974,8 @@ function App() {
     )
 
   const fondoGrafico =
-    segmentosGrafico.length > 0
+    segmentosGrafico.length >
+    0
       ? `conic-gradient(${segmentosGrafico.join(
           ', '
         )})`
@@ -715,17 +985,22 @@ function App() {
     mesesOrdenados
       .filter(
         (mes) =>
-          mes <= mesSeleccionado
+          mes <=
+          mesSeleccionado
       )
       .slice(-6)
 
   const mayorMovimientoGrafico =
     Math.max(
       1,
+
       ...mesesGrafico.flatMap(
         (mes) => [
-          datosMeses[mes]?.ingresos || 0,
-          datosMeses[mes]?.gastos || 0,
+          datosMeses[mes]
+            ?.ingresos || 0,
+
+          datosMeses[mes]
+            ?.gastos || 0,
         ]
       )
     )
@@ -745,10 +1020,11 @@ function App() {
     limitesPorMes.__legacy__ ||
     {}
 
-  const avanceMeta = Math.max(
-    datosActuales.diferencia,
-    0
-  )
+  const avanceMeta =
+    Math.max(
+      datosActuales.diferencia,
+      0
+    )
 
   const porcentajeMeta =
     metaMes > 0
@@ -762,37 +1038,50 @@ function App() {
         )
       : 0
 
-  const formatoDinero = (valor) =>
+  const formatoDinero = (
+    valor
+  ) =>
     new Intl.NumberFormat(
       'es-CL',
       {
-        style: 'currency',
+        style:
+          'currency',
         currency: 'CLP',
-        maximumFractionDigits: 0,
+
+        maximumFractionDigits:
+          0,
       }
     ).format(
       Number(valor) || 0
     )
 
-  const nombreDelMes = (mes) => {
+  const nombreDelMes = (
+    mes
+  ) => {
     if (!mes) {
       return ''
     }
 
-    const [anio, numeroMes] =
-      mes.split('-').map(Number)
-
-    const nombreMes = new Date(
+    const [
       anio,
-      numeroMes - 1,
-      1
-    ).toLocaleDateString(
-      'es-CL',
-      {
-        month: 'long',
-        year: 'numeric',
-      }
-    )
+      numeroMes,
+    ] =
+      mes
+        .split('-')
+        .map(Number)
+
+    const nombreMes =
+      new Date(
+        anio,
+        numeroMes - 1,
+        1
+      ).toLocaleDateString(
+        'es-CL',
+        {
+          month: 'long',
+          year: 'numeric',
+        }
+      )
 
     return (
       nombreMes
@@ -802,13 +1091,20 @@ function App() {
     )
   }
 
-  const nombreMesCorto = (mes) => {
+  const nombreMesCorto = (
+    mes
+  ) => {
     if (!mes) {
       return ''
     }
 
-    const [anio, numeroMes] =
-      mes.split('-').map(Number)
+    const [
+      anio,
+      numeroMes,
+    ] =
+      mes
+        .split('-')
+        .map(Number)
 
     return new Date(
       anio,
@@ -825,12 +1121,20 @@ function App() {
   const formatoFecha = (
     fechaMovimiento
   ) => {
-    if (!fechaMovimiento) {
+    if (
+      !fechaMovimiento
+    ) {
       return ''
     }
 
-    const [anio, mes, dia] =
-      fechaMovimiento.split('-')
+    const [
+      anio,
+      mes,
+      dia,
+    ] =
+      fechaMovimiento.split(
+        '-'
+      )
 
     return `${dia}/${mes}/${anio}`
   }
@@ -841,7 +1145,8 @@ function App() {
     const disponibles =
       mesesOrdenados.filter(
         (mes) =>
-          mes <= mesObjetivo
+          mes <=
+          mesObjetivo
       )
 
     const ultimo =
@@ -855,7 +1160,8 @@ function App() {
 
   useEffect(() => {
     if (
-      mesesOrdenados.length === 0
+      mesesOrdenados.length ===
+      0
     ) {
       return undefined
     }
@@ -871,7 +1177,9 @@ function App() {
           )
 
         const ultimoRegistrado =
-          mesesOrdenados.at(-1)
+          mesesOrdenados.at(
+            -1
+          )
 
         if (
           mesReal >
@@ -900,7 +1208,9 @@ function App() {
               mesReal
             )
 
-            setSeccion('inicio')
+            setSeccion(
+              'inicio'
+            )
           }
 
           return
@@ -922,10 +1232,14 @@ function App() {
             )
 
           setNotificacionMes({
-            mesNuevo: mesReal,
+            mesNuevo:
+              mesReal,
+
             mesAnterior:
               anteriorReal,
+
             saldoAnterior,
+
             mesesPasados:
               diferenciaMeses(
                 ultimoVisto,
@@ -937,7 +1251,9 @@ function App() {
             mesReal
           )
 
-          setSeccion('inicio')
+          setSeccion(
+            'inicio'
+          )
 
           localStorage.setItem(
             'finanzas_ultimo_mes_real',
@@ -948,13 +1264,16 @@ function App() {
 
     comprobarCambioDeMes()
 
-    const intervalo = setInterval(
-      comprobarCambioDeMes,
-      60000
-    )
+    const intervalo =
+      setInterval(
+        comprobarCambioDeMes,
+        60000
+      )
 
     return () =>
-      clearInterval(intervalo)
+      clearInterval(
+        intervalo
+      )
   }, [
     mesesOrdenados,
     datosMeses,
@@ -962,7 +1281,8 @@ function App() {
   ])
 
   const ultimoMesExistente =
-    mesesOrdenados.at(-1) || ''
+    mesesOrdenados.at(-1) ||
+    ''
 
   const proximoMes =
     ultimoMesExistente
@@ -980,6 +1300,18 @@ function App() {
           ultimoMesExistente
     )
 
+  const cerrarGuiaInicial =
+    () => {
+      localStorage.setItem(
+        'finanzas_guia_inicial_vista',
+        'true'
+      )
+
+      setMostrarGuiaInicial(
+        false
+      )
+    }
+
   const iniciarAplicacion = (
     e
   ) => {
@@ -994,7 +1326,9 @@ function App() {
 
     if (
       dineroInicio === '' ||
-      Number(dineroInicio) < 0
+      Number(
+        dineroInicio
+      ) < 0
     ) {
       alert(
         'Escribe cuánto dinero tienes disponible para comenzar.'
@@ -1002,10 +1336,14 @@ function App() {
       return
     }
 
-    setMeses([mesInicio])
+    setMeses([
+      mesInicio,
+    ])
 
     setSaldoInicialBase(
-      Number(dineroInicio)
+      Number(
+        dineroInicio
+      )
     )
 
     setMesSeleccionado(
@@ -1013,68 +1351,95 @@ function App() {
     )
 
     setFecha(
-      fechaParaMes(mesInicio)
+      fechaParaMes(
+        mesInicio
+      )
     )
 
     localStorage.setItem(
       'finanzas_ultimo_mes_real',
       mesActualReal()
     )
-  }
 
-  const abrirNuevoMes = () => {
-    if (
-      opcionesMesNuevo.length === 0
-    ) {
-      alert(
-        'Has llegado al límite del calendario actual de 10 años.'
-      )
-      return
-    }
-
-    setMesNuevo(
-      opcionesMesNuevo.includes(
-        proximoMes
-      )
-        ? proximoMes
-        : opcionesMesNuevo[0]
+    setMostrarGuiaInicial(
+      true
     )
-
-    setMostrarNuevoMes(true)
   }
 
-  const crearNuevoMes = () => {
-    if (!mesNuevo) {
-      return
+  const abrirNuevoMes =
+    () => {
+      if (
+        opcionesMesNuevo.length ===
+        0
+      ) {
+        alert(
+          'Has llegado al límite del calendario actual de 10 años.'
+        )
+        return
+      }
+
+      setMesNuevo(
+        opcionesMesNuevo.includes(
+          proximoMes
+        )
+          ? proximoMes
+          : opcionesMesNuevo[0]
+      )
+
+      setMostrarNuevoMes(
+        true
+      )
     }
 
-    setMeses((actuales) =>
-      agregarMesesHasta(
-        actuales,
+  const crearNuevoMes =
+    () => {
+      if (!mesNuevo) {
+        return
+      }
+
+      setMeses(
+        (actuales) =>
+          agregarMesesHasta(
+            actuales,
+            mesNuevo
+          )
+      )
+
+      setMesSeleccionado(
         mesNuevo
       )
-    )
 
+      setMostrarNuevoMes(
+        false
+      )
+
+      setSeccion(
+        'inicio'
+      )
+
+      limpiarFormulario(
+        mesNuevo
+      )
+    }
+
+  const cambiarMes = (
+    mes
+  ) => {
     setMesSeleccionado(
-      mesNuevo
+      mes
     )
 
-    setMostrarNuevoMes(false)
-
-    setSeccion('inicio')
-
-    limpiarFormulario(mesNuevo)
-  }
-
-  const cambiarMes = (mes) => {
-    setMesSeleccionado(mes)
-    setEditandoId(null)
+    setEditandoId(
+      null
+    )
   }
 
   const cambiarTipo = (
     nuevoTipo
   ) => {
-    setTipo(nuevoTipo)
+    setTipo(
+      nuevoTipo
+    )
 
     setCategoria(
       nuevoTipo === 'gasto'
@@ -1090,11 +1455,16 @@ function App() {
     setMonto('')
     setEditandoId(null)
     setTipo('gasto')
-    setCategoria('Alimentación')
+
+    setCategoria(
+      'Alimentación'
+    )
 
     if (mes) {
       setFecha(
-        fechaParaMes(mes)
+        fechaParaMes(
+          mes
+        )
       )
     }
   }
@@ -1102,11 +1472,18 @@ function App() {
   const irARegistrar = (
     tipoDeseado
   ) => {
-    setSeccion('movimientos')
+    setSeccion(
+      'movimientos'
+    )
 
-    cambiarTipo(tipoDeseado)
+    cambiarTipo(
+      tipoDeseado
+    )
 
-    setEditandoId(null)
+    setEditandoId(
+      null
+    )
+
     setNombre('')
     setMonto('')
 
@@ -1119,8 +1496,11 @@ function App() {
     setTimeout(() => {
       formularioRef.current?.scrollIntoView(
         {
-          behavior: 'smooth',
-          block: 'start',
+          behavior:
+            'smooth',
+
+          block:
+            'start',
         }
       )
     }, 80)
@@ -1165,10 +1545,15 @@ function App() {
                 ? {
                     ...movimiento,
                     tipo,
+
                     nombre:
                       nombre.trim(),
+
                     monto:
-                      Number(monto),
+                      Number(
+                        monto
+                      ),
+
                     categoria,
                     fecha,
                   }
@@ -1180,14 +1565,20 @@ function App() {
       return
     }
 
-    const nuevoMovimiento = {
-      id: Date.now(),
-      tipo,
-      nombre: nombre.trim(),
-      monto: Number(monto),
-      categoria,
-      fecha,
-    }
+    const nuevoMovimiento =
+      {
+        id: Date.now(),
+        tipo,
+
+        nombre:
+          nombre.trim(),
+
+        monto:
+          Number(monto),
+
+        categoria,
+        fecha,
+      }
 
     setMovimientos(
       (actuales) => [
@@ -1202,7 +1593,9 @@ function App() {
   const editarMovimiento = (
     movimiento
   ) => {
-    setSeccion('movimientos')
+    setSeccion(
+      'movimientos'
+    )
 
     setTipo(
       movimiento.tipo
@@ -1233,8 +1626,11 @@ function App() {
     setTimeout(() => {
       formularioRef.current?.scrollIntoView(
         {
-          behavior: 'smooth',
-          block: 'start',
+          behavior:
+            'smooth',
+
+          block:
+            'start',
         }
       )
     }, 80)
@@ -1283,38 +1679,44 @@ function App() {
     }
   }
 
-  const deshacerEliminacion = () => {
-    if (!ultimoEliminado) {
-      return
-    }
+  const deshacerEliminacion =
+    () => {
+      if (
+        !ultimoEliminado
+      ) {
+        return
+      }
 
-    setMovimientos(
-      (actuales) => {
-        const copia = [
-          ...actuales,
-        ]
+      setMovimientos(
+        (actuales) => {
+          const copia = [
+            ...actuales,
+          ]
 
-        const posicion =
-          Math.min(
-            Math.max(
-              ultimoEliminado.indice,
-              0
-            ),
-            copia.length
+          const posicion =
+            Math.min(
+              Math.max(
+                ultimoEliminado.indice,
+                0
+              ),
+
+              copia.length
+            )
+
+          copia.splice(
+            posicion,
+            0,
+            ultimoEliminado.movimiento
           )
 
-        copia.splice(
-          posicion,
-          0,
-          ultimoEliminado.movimiento
-        )
+          return copia
+        }
+      )
 
-        return copia
-      }
-    )
-
-    setUltimoEliminado(null)
-  }
+      setUltimoEliminado(
+        null
+      )
+    }
 
   const actualizarLimite = (
     nombreCategoria,
@@ -1334,50 +1736,129 @@ function App() {
           ),
 
           [nombreCategoria]:
-            Number(valor) || 0,
+            Number(
+              valor
+            ) || 0,
         },
       })
     )
   }
 
-  const descargarRespaldo = () => {
-    const respaldo = {
-      tipo: 'finanzas-hogar-respaldo',
-      version: 1,
-      creado: new Date().toISOString(),
+  const guardarSaldoInicial =
+    () => {
+      if (
+        saldoInicialEdicion ===
+          '' ||
+        Number(
+          saldoInicialEdicion
+        ) < 0
+      ) {
+        alert(
+          'Escribe un monto válido igual o mayor que cero.'
+        )
+        return
+      }
 
-      datos: {
-        movimientos,
-        meses: mesesOrdenados,
-        saldoInicialBase,
-        mesSeleccionado,
-        metasPorMes,
-        limitesPorMes,
-        modoOscuro,
+      const nuevoSaldo =
+        Number(
+          saldoInicialEdicion
+        )
 
-        ultimoMesReal:
-          localStorage.getItem(
-            'finanzas_ultimo_mes_real'
-          ) || mesActualReal(),
-      },
+      if (
+        nuevoSaldo ===
+        saldoInicialBase
+      ) {
+        alert(
+          'El dinero inicial no cambió.'
+        )
+        return
+      }
+
+      const confirmar =
+        window.confirm(
+          `Vas a cambiar el dinero inicial de ${nombreDelMes(
+            mesesOrdenados[0]
+          )} de ${formatoDinero(
+            saldoInicialBase
+          )} a ${formatoDinero(
+            nuevoSaldo
+          )}.\n\nEsto recalculará automáticamente el saldo de todos los meses posteriores.\n\n¿Quieres continuar?`
+        )
+
+      if (!confirmar) {
+        setSaldoInicialEdicion(
+          String(
+            saldoInicialBase
+          )
+        )
+
+        return
+      }
+
+      setSaldoInicialBase(
+        nuevoSaldo
+      )
+
+      alert(
+        'Dinero inicial actualizado. Los meses posteriores fueron recalculados automáticamente.'
+      )
     }
 
-    const contenido = JSON.stringify(
-      respaldo,
-      null,
-      2
-    )
+  const descargarRespaldo =
+    () => {
+      const respaldo = {
+        tipo:
+          'finanzas-hogar-respaldo',
 
-    descargarArchivo(
-      contenido,
-      `respaldo-finanzas-hogar-${fechaLocal()}.json`,
-      'application/json;charset=utf-8'
-    )
-  }
+        version: 1,
 
-  const seleccionarRespaldo = () => {
-    archivoRespaldoRef.current?.click()
-  }
+        creado:
+          new Date().toISOString(),
+
+        datos: {
+          movimientos,
+
+          meses:
+            mesesOrdenados,
+
+          saldoInicialBase,
+
+          mesSeleccionado,
+
+          metasPorMes,
+
+          limitesPorMes,
+
+          modoOscuro,
+
+          ultimoMesReal:
+            localStorage.getItem(
+              'finanzas_ultimo_mes_real'
+            ) ||
+            mesActualReal(),
+        },
+      }
+
+      const contenido =
+        JSON.stringify(
+          respaldo,
+          null,
+          2
+        )
+
+      descargarArchivo(
+        contenido,
+
+        `respaldo-finanzas-hogar-${fechaLocal()}.json`,
+
+        'application/json;charset=utf-8'
+      )
+    }
+
+  const seleccionarRespaldo =
+    () => {
+      archivoRespaldoRef.current?.click()
+    }
 
   const restaurarRespaldo = (
     evento
@@ -1389,40 +1870,57 @@ function App() {
       return
     }
 
-    const lector = new FileReader()
+    const lector =
+      new FileReader()
 
     lector.onload = () => {
       try {
-        const respaldo = JSON.parse(
-          lector.result
-        )
+        const respaldo =
+          JSON.parse(
+            lector.result
+          )
 
         if (
           respaldo?.tipo !==
             'finanzas-hogar-respaldo' ||
           !respaldo?.datos ||
           !Array.isArray(
-            respaldo.datos.movimientos
+            respaldo.datos
+              .movimientos
           ) ||
           !Array.isArray(
-            respaldo.datos.meses
+            respaldo.datos
+              .meses
           )
         ) {
           alert(
             'Este archivo no parece ser una copia válida de Finanzas del Hogar.'
           )
 
-          evento.target.value = ''
+          evento.target.value =
+            ''
+
           return
         }
 
+        const fechaCopia =
+          respaldo.creado
+            ? new Date(
+                respaldo.creado
+              ).toLocaleString(
+                'es-CL'
+              )
+            : 'fecha desconocida'
+
         const confirmar =
           window.confirm(
-            'Restaurar esta copia reemplazará los datos actuales de la aplicación. ¿Quieres continuar?'
+            `Esta copia fue creada el ${fechaCopia}.\n\nRestaurarla reemplazará los datos actuales de la aplicación.\n\n¿Quieres continuar?`
           )
 
         if (!confirmar) {
-          evento.target.value = ''
+          evento.target.value =
+            ''
+
           return
         }
 
@@ -1431,6 +1929,7 @@ function App() {
 
         localStorage.setItem(
           'movimientos',
+
           JSON.stringify(
             datos.movimientos
           )
@@ -1438,6 +1937,7 @@ function App() {
 
         localStorage.setItem(
           'finanzas_meses',
+
           JSON.stringify(
             completarMeses(
               datos.meses
@@ -1447,6 +1947,7 @@ function App() {
 
         localStorage.setItem(
           'finanzas_saldo_inicial',
+
           Number(
             datos.saldoInicialBase
           ) || 0
@@ -1454,20 +1955,25 @@ function App() {
 
         localStorage.setItem(
           'finanzas_metas_por_mes',
+
           JSON.stringify(
-            datos.metasPorMes || {}
+            datos.metasPorMes ||
+              {}
           )
         )
 
         localStorage.setItem(
           'finanzas_limites_por_mes',
+
           JSON.stringify(
-            datos.limitesPorMes || {}
+            datos.limitesPorMes ||
+              {}
           )
         )
 
         localStorage.setItem(
           'modoOscuro',
+
           Boolean(
             datos.modoOscuro
           )
@@ -1483,9 +1989,13 @@ function App() {
             datos.mesSeleccionado
           )
             ? datos.mesSeleccionado
-            : mesesRestaurados.at(-1)
+            : mesesRestaurados.at(
+                -1
+              )
 
-        if (mesRestaurado) {
+        if (
+          mesRestaurado
+        ) {
           localStorage.setItem(
             'finanzas_mes_seleccionado',
             mesRestaurado
@@ -1494,6 +2004,7 @@ function App() {
 
         localStorage.setItem(
           'finanzas_ultimo_mes_real',
+
           datos.ultimoMesReal ||
             mesActualReal()
         )
@@ -1508,70 +2019,102 @@ function App() {
           'No se pudo leer el archivo. Comprueba que sea una copia de seguridad válida.'
         )
 
-        evento.target.value = ''
+        evento.target.value =
+          ''
       }
     }
 
-    lector.readAsText(archivo)
-  }
-
-  const exportarCSV = () => {
-    if (movimientos.length === 0) {
-      alert(
-        'Todavía no hay movimientos para exportar.'
-      )
-      return
-    }
-
-    const limpiar = (valor) =>
-      `"${String(valor ?? '')
-        .replaceAll('"', '""')}"`
-
-    const filas = [
-      [
-        'Fecha',
-        'Tipo',
-        'Nombre',
-        'Categoría',
-        'Monto',
-      ],
-      ...[...movimientos]
-        .sort(
-          (a, b) =>
-            String(a.fecha).localeCompare(
-              String(b.fecha)
-            )
-        )
-        .map(
-          (movimiento) => [
-            movimiento.fecha,
-            movimiento.tipo ===
-            'gasto'
-              ? 'Gasto'
-              : 'Ingreso',
-            movimiento.nombre,
-            movimiento.categoria,
-            Number(
-              movimiento.monto
-            ) || 0,
-          ]
-        ),
-    ]
-
-    const csv = filas
-      .map((fila) =>
-        fila
-          .map(limpiar)
-          .join(';')
-      )
-      .join('\n')
-
-    descargarArchivo(
-      `\uFEFF${csv}`,
-      `movimientos-finanzas-${fechaLocal()}.csv`,
-      'text/csv;charset=utf-8'
+    lector.readAsText(
+      archivo
     )
   }
+
+  const exportarCSV =
+    () => {
+      if (
+        movimientos.length ===
+        0
+      ) {
+        alert(
+          'Todavía no hay movimientos para exportar.'
+        )
+        return
+      }
+
+      const limpiar = (
+        valor
+      ) =>
+        `"${String(
+          valor ?? ''
+        ).replaceAll(
+          '"',
+          '""'
+        )}"`
+
+      const filas = [
+        [
+          'Fecha',
+          'Tipo',
+          'Nombre',
+          'Categoría',
+          'Monto',
+        ],
+
+        ...[
+          ...movimientos,
+        ]
+          .sort(
+            (a, b) =>
+              String(
+                a.fecha
+              ).localeCompare(
+                String(
+                  b.fecha
+                )
+              )
+          )
+          .map(
+            (
+              movimiento
+            ) => [
+              movimiento.fecha,
+
+              movimiento.tipo ===
+              'gasto'
+                ? 'Gasto'
+                : 'Ingreso',
+
+              movimiento.nombre,
+
+              movimiento.categoria,
+
+              Number(
+                movimiento.monto
+              ) || 0,
+            ]
+          ),
+      ]
+
+      const csv =
+        filas
+          .map(
+            (fila) =>
+              fila
+                .map(
+                  limpiar
+                )
+                .join(';')
+          )
+          .join('\n')
+
+      descargarArchivo(
+        `\uFEFF${csv}`,
+
+        `movimientos-finanzas-${fechaLocal()}.csv`,
+
+        'text/csv;charset=utf-8'
+      )
+    }
 
   const categorias =
     tipo === 'gasto'
@@ -1579,7 +2122,8 @@ function App() {
       : categoriasIngreso
 
   if (
-    mesesOrdenados.length === 0
+    mesesOrdenados.length ===
+    0
   ) {
     return (
       <div
@@ -1601,8 +2145,7 @@ function App() {
               </h1>
 
               <p className="subtitulo">
-                Tú registras lo que entra y lo que gastas.
-                La aplicación hace los cálculos.
+                Tú registras lo que entra y lo que gastas. La aplicación hace los cálculos.
               </p>
             </div>
 
@@ -1621,8 +2164,7 @@ function App() {
             </h2>
 
             <p className="subtitulo-panel">
-              Solo necesitamos saber con qué mes comienzas
-              y cuánto dinero tienes disponible.
+              Solo necesitamos saber con qué mes comienzas y cuánto dinero tienes disponible.
             </p>
 
             <form
@@ -1636,13 +2178,18 @@ function App() {
 
                   <input
                     type="month"
-                    value={mesInicio}
+                    value={
+                      mesInicio
+                    }
                     max={
                       ultimoMesCalendario
                     }
-                    onChange={(e) =>
+                    onChange={(
+                      e
+                    ) =>
                       setMesInicio(
-                        e.target.value
+                        e.target
+                          .value
                       )
                     }
                   />
@@ -1654,10 +2201,15 @@ function App() {
                   <input
                     type="number"
                     min="0"
-                    value={dineroInicio}
-                    onChange={(e) =>
+                    value={
+                      dineroInicio
+                    }
+                    onChange={(
+                      e
+                    ) =>
                       setDineroInicio(
-                        e.target.value
+                        e.target
+                          .value
                       )
                     }
                     placeholder="Ej: 1000000"
@@ -1666,8 +2218,7 @@ function App() {
               </div>
 
               <p className="ayuda-campo">
-                En los meses siguientes este monto se calculará
-                automáticamente con lo que te haya quedado.
+                En los meses siguientes este monto se calculará automáticamente con lo que te haya quedado.
               </p>
 
               <button
@@ -1719,12 +2270,15 @@ function App() {
           <button
             type="button"
             className={
-              seccion === 'inicio'
+              seccion ===
+              'inicio'
                 ? 'activo'
                 : ''
             }
             onClick={() =>
-              setSeccion('inicio')
+              setSeccion(
+                'inicio'
+              )
             }
           >
             🏠 Inicio
@@ -1733,7 +2287,8 @@ function App() {
           <button
             type="button"
             className={
-              seccion === 'movimientos'
+              seccion ===
+              'movimientos'
                 ? 'activo'
                 : ''
             }
@@ -1749,7 +2304,8 @@ function App() {
           <button
             type="button"
             className={
-              seccion === 'planificacion'
+              seccion ===
+              'planificacion'
                 ? 'activo'
                 : ''
             }
@@ -1765,12 +2321,15 @@ function App() {
           <button
             type="button"
             className={
-              seccion === 'mas'
+              seccion ===
+              'mas'
                 ? 'activo'
                 : ''
             }
             onClick={() =>
-              setSeccion('mas')
+              setSeccion(
+                'mas'
+              )
             }
           >
             ⚙️ Más
@@ -1815,9 +2374,12 @@ function App() {
               value={
                 mesSeleccionado
               }
-              onChange={(e) =>
+              onChange={(
+                e
+              ) =>
                 cambiarMes(
-                  e.target.value
+                  e.target
+                    .value
                 )
               }
               aria-label="Elegir mes"
@@ -1825,8 +2387,12 @@ function App() {
               {mesesOrdenados.map(
                 (mes) => (
                   <option
-                    key={mes}
-                    value={mes}
+                    key={
+                      mes
+                    }
+                    value={
+                      mes
+                    }
                   >
                     {nombreDelMes(
                       mes
@@ -1855,7 +2421,8 @@ function App() {
           </div>
         </section>
 
-        {seccion === 'inicio' && (
+        {seccion ===
+          'inicio' && (
           <>
             <section className="resumen resumen-cuatro">
               <article className="tarjeta">
@@ -1908,7 +2475,8 @@ function App() {
             </section>
 
             <section className="panel mensaje-principal">
-              {datosActuales.diferencia > 0 && (
+              {datosActuales.diferencia >
+                0 && (
                 <p>
                   ✅ Este mes entró{' '}
                   <strong>
@@ -1920,7 +2488,8 @@ function App() {
                 </p>
               )}
 
-              {datosActuales.diferencia < 0 && (
+              {datosActuales.diferencia <
+                0 && (
                 <p>
                   ℹ️ Este mes gastaste{' '}
                   <strong>
@@ -1934,10 +2503,10 @@ function App() {
                 </p>
               )}
 
-              {datosActuales.diferencia === 0 && (
+              {datosActuales.diferencia ===
+                0 && (
                 <p>
-                  ℹ️ Este mes lo que entró y lo que gastaste
-                  está equilibrado.
+                  ℹ️ Este mes lo que entró y lo que gastaste está equilibrado.
                 </p>
               )}
             </section>
@@ -1997,18 +2566,27 @@ function App() {
                 </div>
 
                 <div className="leyenda-grafico">
-                  {gastosPorCategoria.length === 0 ? (
+                  {gastosPorCategoria.length ===
+                  0 ? (
                     <p className="sin-datos-grafico">
                       Registra gastos para ver cómo se distribuyen.
                     </p>
                   ) : (
                     gastosPorCategoria
-                      .slice(0, 6)
+                      .slice(
+                        0,
+                        6
+                      )
                       .map(
-                        (item, indice) => (
+                        (
+                          item,
+                          indice
+                        ) => (
                           <div
                             className="leyenda-item"
-                            key={item.nombre}
+                            key={
+                              item.nombre
+                            }
                           >
                             <span
                               className="leyenda-color"
@@ -2023,11 +2601,16 @@ function App() {
 
                             <div>
                               <strong>
-                                {item.nombre}
+                                {
+                                  item.nombre
+                                }
                               </strong>
 
                               <span>
-                                {item.porcentaje}% ·{' '}
+                                {
+                                  item.porcentaje
+                                }
+                                % ·{' '}
                                 {formatoDinero(
                                   item.total
                                 )}
@@ -2087,7 +2670,9 @@ function App() {
                   <p>
                     Tu categoría con más gasto es{' '}
                     <strong>
-                      {categoriaPrincipal.nombre}
+                      {
+                        categoriaPrincipal.nombre
+                      }
                     </strong>{' '}
                     con{' '}
                     <strong>
@@ -2120,16 +2705,22 @@ function App() {
                 </button>
               </div>
 
-              {movimientosMes.length === 0 ? (
+              {movimientosMes.length ===
+              0 ? (
                 <p className="sin-movimientos">
                   Todavía no has registrado movimientos en este mes.
                 </p>
               ) : (
                 <div className="lista">
                   {movimientosMes
-                    .slice(0, 3)
+                    .slice(
+                      0,
+                      3
+                    )
                     .map(
-                      (movimiento) => (
+                      (
+                        movimiento
+                      ) => (
                         <article
                           className="movimiento"
                           key={
@@ -2138,11 +2729,15 @@ function App() {
                         >
                           <div className="movimiento-info">
                             <strong>
-                              {movimiento.nombre}
+                              {
+                                movimiento.nombre
+                              }
                             </strong>
 
                             <span>
-                              {movimiento.categoria}{' '}
+                              {
+                                movimiento.categoria
+                              }{' '}
                               ·{' '}
                               {formatoFecha(
                                 movimiento.fecha
@@ -2176,20 +2771,25 @@ function App() {
           </>
         )}
 
-        {seccion === 'movimientos' && (
+        {seccion ===
+          'movimientos' && (
           <>
             <section
               className="panel"
-              ref={formularioRef}
+              ref={
+                formularioRef
+              }
             >
               <h2>
-                {editandoId !== null
+                {editandoId !==
+                null
                   ? '✏️ Estás editando un movimiento'
                   : '➕ Registrar un movimiento'}
               </h2>
 
               <p className="subtitulo-panel">
-                {editandoId !== null
+                {editandoId !==
+                null
                   ? 'Corrige lo que necesites y pulsa Guardar cambios.'
                   : 'Primero elige si el dinero salió o entró a tu hogar.'}
               </p>
@@ -2198,7 +2798,8 @@ function App() {
                 <button
                   type="button"
                   className={
-                    tipo === 'gasto'
+                    tipo ===
+                    'gasto'
                       ? 'activo'
                       : ''
                   }
@@ -2214,7 +2815,8 @@ function App() {
                 <button
                   type="button"
                   className={
-                    tipo === 'ingreso'
+                    tipo ===
+                    'ingreso'
                       ? 'activo'
                       : ''
                   }
@@ -2239,14 +2841,20 @@ function App() {
 
                     <input
                       type="text"
-                      value={nombre}
-                      onChange={(e) =>
+                      value={
+                        nombre
+                      }
+                      onChange={(
+                        e
+                      ) =>
                         setNombre(
-                          e.target.value
+                          e.target
+                            .value
                         )
                       }
                       placeholder={
-                        tipo === 'gasto'
+                        tipo ===
+                        'gasto'
                           ? 'Ej: Supermercado'
                           : 'Ej: Sueldo'
                       }
@@ -2259,10 +2867,15 @@ function App() {
                     <input
                       type="number"
                       min="1"
-                      value={monto}
-                      onChange={(e) =>
+                      value={
+                        monto
+                      }
+                      onChange={(
+                        e
+                      ) =>
                         setMonto(
-                          e.target.value
+                          e.target
+                            .value
                         )
                       }
                       placeholder="Ej: 25000"
@@ -2273,19 +2886,30 @@ function App() {
                     Categoría
 
                     <select
-                      value={categoria}
-                      onChange={(e) =>
+                      value={
+                        categoria
+                      }
+                      onChange={(
+                        e
+                      ) =>
                         setCategoria(
-                          e.target.value
+                          e.target
+                            .value
                         )
                       }
                     >
                       {categorias.map(
-                        (opcion) => (
+                        (
+                          opcion
+                        ) => (
                           <option
-                            key={opcion}
+                            key={
+                              opcion
+                            }
                           >
-                            {opcion}
+                            {
+                              opcion
+                            }
                           </option>
                         )
                       )}
@@ -2301,10 +2925,15 @@ function App() {
                       max={ultimoDiaDelMes(
                         mesSeleccionado
                       )}
-                      value={fecha}
-                      onChange={(e) =>
+                      value={
+                        fecha
+                      }
+                      onChange={(
+                        e
+                      ) =>
                         setFecha(
-                          e.target.value
+                          e.target
+                            .value
                         )
                       }
                     />
@@ -2315,14 +2944,17 @@ function App() {
                   className="guardar"
                   type="submit"
                 >
-                  {editandoId !== null
+                  {editandoId !==
+                  null
                     ? 'Guardar cambios'
-                    : tipo === 'gasto'
+                    : tipo ===
+                        'gasto'
                       ? 'Guardar gasto'
                       : 'Guardar ingreso'}
                 </button>
 
-                {editandoId !== null && (
+                {editandoId !==
+                  null && (
                   <button
                     className="cancelar"
                     type="button"
@@ -2344,14 +2976,17 @@ function App() {
                 )}
               </h2>
 
-              {movimientosMes.length === 0 ? (
+              {movimientosMes.length ===
+              0 ? (
                 <p className="sin-movimientos">
                   Todavía no hay movimientos en este mes.
                 </p>
               ) : (
                 <div className="lista">
                   {movimientosMes.map(
-                    (movimiento) => (
+                    (
+                      movimiento
+                    ) => (
                       <article
                         className="movimiento"
                         key={
@@ -2360,11 +2995,15 @@ function App() {
                       >
                         <div className="movimiento-info">
                           <strong>
-                            {movimiento.nombre}
+                            {
+                              movimiento.nombre
+                            }
                           </strong>
 
                           <span>
-                            {movimiento.categoria}{' '}
+                            {
+                              movimiento.categoria
+                            }{' '}
                             ·{' '}
                             {formatoFecha(
                               movimiento.fecha
@@ -2426,7 +3065,8 @@ function App() {
           </>
         )}
 
-        {seccion === 'planificacion' && (
+        {seccion ===
+          'planificacion' && (
           <>
             <section className="panel">
               <h2>
@@ -2434,28 +3074,37 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                Es opcional. Indica cuánto quieres que tus ingresos
-                superen a tus gastos este mes.
+                Es opcional. Indica cuánto quieres que tus ingresos superen a tus gastos este mes.
               </p>
 
               <div className="campo-presupuesto">
-                <span>$</span>
+                <span>
+                  $
+                </span>
 
                 <input
                   type="number"
                   min="0"
                   value={
-                    metaMes || ''
+                    metaMes ||
+                    ''
                   }
-                  onChange={(e) =>
+                  onChange={(
+                    e
+                  ) =>
                     setMetasPorMes(
-                      (actuales) => ({
+                      (
+                        actuales
+                      ) => ({
                         ...actuales,
 
                         [mesSeleccionado]:
                           Number(
-                            e.target.value
-                          ) || 0,
+                            e
+                              .target
+                              .value
+                          ) ||
+                          0,
                       })
                     )
                   }
@@ -2463,7 +3112,8 @@ function App() {
                 />
               </div>
 
-              {metaMes > 0 && (
+              {metaMes >
+                0 && (
                 <div className="meta-ahorro">
                   <div className="progreso-texto">
                     <span>
@@ -2471,7 +3121,10 @@ function App() {
                     </span>
 
                     <strong>
-                      {porcentajeMeta}%
+                      {
+                        porcentajeMeta
+                      }
+                      %
                     </strong>
                   </div>
 
@@ -2485,7 +3138,8 @@ function App() {
                   </div>
 
                   <p>
-                    {avanceMeta > 0
+                    {avanceMeta >
+                    0
                       ? `Hasta ahora tus ingresos superan tus gastos en ${formatoDinero(
                           avanceMeta
                         )}.`
@@ -2501,32 +3155,38 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                Opcional: decide cuánto quieres gastar como máximo
-                en cada categoría durante este mes.
+                Opcional: decide cuánto quieres gastar como máximo en cada categoría durante este mes.
               </p>
 
               <div className="presupuestos-categorias">
                 {categoriasGasto.map(
-                  (nombreCategoria) => {
+                  (
+                    nombreCategoria
+                  ) => {
                     const gasto =
                       gastosPorCategoria.find(
-                        (item) =>
+                        (
+                          item
+                        ) =>
                           item.nombre ===
                           nombreCategoria
                       )
 
                     const gastado =
-                      gasto?.total || 0
+                      gasto?.total ||
+                      0
 
                     const limite =
                       Number(
                         limitesMes[
                           nombreCategoria
                         ]
-                      ) || 0
+                      ) ||
+                      0
 
                     const porcentaje =
-                      limite > 0
+                      limite >
+                      0
                         ? Math.round(
                             (gastado /
                               limite) *
@@ -2543,7 +3203,9 @@ function App() {
                       >
                         <div className="categoria-cabecera">
                           <strong>
-                            {nombreCategoria}
+                            {
+                              nombreCategoria
+                            }
                           </strong>
 
                           <span>
@@ -2551,7 +3213,8 @@ function App() {
                               gastado
                             )}
 
-                            {limite > 0 &&
+                            {limite >
+                              0 &&
                               ` de ${formatoDinero(
                                 limite
                               )}`}
@@ -2564,18 +3227,24 @@ function App() {
                           value={
                             limitesMes[
                               nombreCategoria
-                            ] || ''
+                            ] ||
+                            ''
                           }
-                          onChange={(e) =>
+                          onChange={(
+                            e
+                          ) =>
                             actualizarLimite(
                               nombreCategoria,
-                              e.target.value
+                              e
+                                .target
+                                .value
                             )
                           }
                           placeholder="Escribe un límite"
                         />
 
-                        {limite > 0 && (
+                        {limite >
+                          0 && (
                           <>
                             <div className="barra-categoria">
                               <div
@@ -2589,11 +3258,13 @@ function App() {
                               />
                             </div>
 
-                            {porcentaje >= 100 ? (
+                            {porcentaje >=
+                            100 ? (
                               <p className="alerta-gasto alerta-roja">
                                 🚨 Superaste este límite.
                               </p>
-                            ) : porcentaje >= 80 ? (
+                            ) : porcentaje >=
+                              80 ? (
                               <p className="alerta-gasto alerta-amarilla">
                                 ⚠️ Estás cerca del límite.
                               </p>
@@ -2640,16 +3311,22 @@ function App() {
                 </div>
 
                 <div className="categorias-resumen">
-                  {gastosPorCategoria.length === 0 ? (
+                  {gastosPorCategoria.length ===
+                  0 ? (
                     <p className="sin-movimientos">
                       Cuando registres gastos aparecerán aquí.
                     </p>
                   ) : (
                     gastosPorCategoria.map(
-                      (item, indice) => (
+                      (
+                        item,
+                        indice
+                      ) => (
                         <div
                           className="categoria-resumen"
-                          key={item.nombre}
+                          key={
+                            item.nombre
+                          }
                         >
                           <div className="categoria-texto">
                             <strong>
@@ -2664,14 +3341,20 @@ function App() {
                                 }}
                               />
 
-                              {item.nombre}
+                              {
+                                item.nombre
+                              }
                             </strong>
 
                             <span>
                               {formatoDinero(
                                 item.total
                               )}{' '}
-                              · {item.porcentaje}%
+                              ·{' '}
+                              {
+                                item.porcentaje
+                              }
+                              %
                             </span>
                           </div>
 
@@ -2702,9 +3385,13 @@ function App() {
 
               <div className="grafico-meses">
                 {mesesGrafico.map(
-                  (mes) => {
+                  (
+                    mes
+                  ) => {
                     const datos =
-                      datosMeses[mes]
+                      datosMeses[
+                        mes
+                      ]
 
                     const anchoIngresos =
                       Math.round(
@@ -2723,7 +3410,9 @@ function App() {
                     return (
                       <div
                         className="fila-grafico-mes"
-                        key={mes}
+                        key={
+                          mes
+                        }
                       >
                         <div className="mes-grafico-nombre">
                           {nombreMesCorto(
@@ -2783,7 +3472,8 @@ function App() {
           </>
         )}
 
-        {seccion === 'mas' && (
+        {seccion ===
+          'mas' && (
           <>
             <section className="panel">
               <h2>
@@ -2813,8 +3503,7 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                El modo oscuro solo cambia el aspecto.
-                Tus datos no cambian.
+                El modo oscuro solo cambia el aspecto. Tus datos no cambian.
               </p>
 
               <button
@@ -2822,7 +3511,9 @@ function App() {
                 className="boton-secundario boton-grande"
                 onClick={() =>
                   setModoOscuro(
-                    (actual) =>
+                    (
+                      actual
+                    ) =>
                       !actual
                   )
                 }
@@ -2839,9 +3530,7 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                La aplicación reconoce automáticamente los cambios
-                de mes usando la fecha de tu dispositivo.
-                No necesitas crear cada mes manualmente.
+                La aplicación reconoce automáticamente los cambios de mes usando la fecha de tu dispositivo. No necesitas crear cada mes manualmente.
               </p>
 
               <p>
@@ -2855,8 +3544,7 @@ function App() {
               </p>
 
               <p>
-                Si quieres organizar con anticipación un mes que
-                todavía no comienza, puedes prepararlo desde aquí.
+                Si quieres organizar con anticipación un mes que todavía no comienza, puedes prepararlo desde aquí.
               </p>
 
               <button
@@ -2876,29 +3564,44 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                Si te equivocaste al comenzar, puedes corregir aquí
-                el dinero inicial. Los meses posteriores se recalcularán
-                automáticamente.
+                Este valor es importante: cambiarlo modifica el saldo inicial y recalcula automáticamente todos los meses posteriores.
               </p>
 
               <div className="campo-presupuesto">
-                <span>$</span>
+                <span>
+                  $
+                </span>
 
                 <input
                   type="number"
                   min="0"
                   value={
-                    saldoInicialBase
+                    saldoInicialEdicion
                   }
-                  onChange={(e) =>
-                    setSaldoInicialBase(
-                      Number(
-                        e.target.value
-                      ) || 0
+                  onChange={(
+                    e
+                  ) =>
+                    setSaldoInicialEdicion(
+                      e.target
+                        .value
                     )
                   }
                 />
               </div>
+
+              <button
+                type="button"
+                className="guardar"
+                onClick={
+                  guardarSaldoInicial
+                }
+              >
+                Guardar cambio
+              </button>
+
+              <p className="ayuda-campo">
+                ⚠️ Antes de aplicar un cambio, la aplicación te pedirá confirmación.
+              </p>
             </section>
 
             <section className="panel aviso-datos">
@@ -2907,9 +3610,7 @@ function App() {
               </h2>
 
               <p>
-                Descarga una copia completa de tus movimientos,
-                meses, metas y límites. Guarda este archivo en un
-                lugar seguro.
+                Descarga una copia completa de tus movimientos, meses, metas y límites. Guarda este archivo en un lugar seguro.
               </p>
 
               <button
@@ -2929,8 +3630,10 @@ function App() {
                   seleccionarRespaldo
                 }
                 style={{
-                  width: '100%',
-                  marginTop: '10px',
+                  width:
+                    '100%',
+                  marginTop:
+                    '10px',
                 }}
               >
                 ♻️ Restaurar una copia
@@ -2946,13 +3649,13 @@ function App() {
                   restaurarRespaldo
                 }
                 style={{
-                  display: 'none',
+                  display:
+                    'none',
                 }}
               />
 
               <p className="ayuda-campo">
-                Restaurar una copia reemplaza los datos actuales,
-                pero la aplicación siempre pedirá confirmación antes.
+                Restaurar una copia reemplaza los datos actuales. Antes de hacerlo, verás la fecha de la copia y tendrás que confirmar.
               </p>
             </section>
 
@@ -2962,8 +3665,7 @@ function App() {
               </h2>
 
               <p className="subtitulo-panel">
-                Descarga tus movimientos en un archivo CSV que
-                puedes abrir con Excel u otras hojas de cálculo.
+                Descarga tus movimientos en un archivo CSV que puedes abrir con Excel u otras hojas de cálculo.
               </p>
 
               <button
@@ -2983,14 +3685,67 @@ function App() {
               </h2>
 
               <p>
-                La aplicación continúa guardando tus datos en este
-                navegador. Por eso es recomendable descargar una
-                copia de seguridad regularmente.
+                La aplicación guarda tus datos en este navegador. Para protegerlos, descarga una copia de seguridad regularmente.
               </p>
             </section>
           </>
         )}
       </main>
+
+      {mostrarGuiaInicial && (
+        <div className="modal-fondo">
+          <div className="modal-ayuda">
+            <div className="bienvenida-icono">
+              👋
+            </div>
+
+            <h2>
+              Bienvenido a Finanzas del Hogar
+            </h2>
+
+            <p>
+              Usarla es sencillo. Solo recuerda estas tres cosas:
+            </p>
+
+            <div className="instrucciones">
+              <p>
+                <strong>
+                  1. 🧾 Registra lo que entra y sale.
+                </strong>{' '}
+                Usa los botones de ingreso y gasto cada vez que quieras anotar un movimiento.
+              </p>
+
+              <p>
+                <strong>
+                  2. 💵 Mira cuánto te queda.
+                </strong>{' '}
+                Inicio hace los cálculos automáticamente y te muestra el resultado del mes.
+              </p>
+
+              <p>
+                <strong>
+                  3. 📅 No tienes que crear cada mes.
+                </strong>{' '}
+                Cuando cambie el mes, la aplicación trasladará automáticamente el dinero que quedó.
+              </p>
+            </div>
+
+            <p className="consejo-ayuda">
+              💡 Si alguna vez tienes dudas, encontrarás la guía completa en ⚙️ Más → Ayuda.
+            </p>
+
+            <button
+              className="guardar"
+              type="button"
+              onClick={
+                cerrarGuiaInicial
+              }
+            >
+              Entendido, comenzar
+            </button>
+          </div>
+        </div>
+      )}
 
       {mostrarNuevoMes && (
         <div className="modal-fondo">
@@ -3013,26 +3768,36 @@ function App() {
             </h2>
 
             <p>
-              Esta función es opcional. La aplicación cambiará
-              automáticamente de mes cuando llegue la fecha.
+              Esta función es opcional. La aplicación cambiará automáticamente de mes cuando llegue la fecha.
             </p>
 
             <label>
               Mes que quieres preparar
 
               <select
-                value={mesNuevo}
-                onChange={(e) =>
+                value={
+                  mesNuevo
+                }
+                onChange={(
+                  e
+                ) =>
                   setMesNuevo(
-                    e.target.value
+                    e.target
+                      .value
                   )
                 }
               >
                 {opcionesMesNuevo.map(
-                  (mes) => (
+                  (
+                    mes
+                  ) => (
                     <option
-                      key={mes}
-                      value={mes}
+                      key={
+                        mes
+                      }
+                      value={
+                        mes
+                      }
                     >
                       {nombreDelMes(
                         mes
@@ -3064,8 +3829,7 @@ function App() {
               mesNuevo !==
                 proximoMes && (
                 <p className="consejo-ayuda">
-                  💡 Los meses intermedios también se prepararán
-                  automáticamente.
+                  💡 Los meses intermedios también se prepararán automáticamente.
                 </p>
               )}
 
@@ -3128,14 +3892,13 @@ function App() {
             </div>
 
             <p>
-              Ese mismo monto pasa automáticamente como dinero inicial
-              del nuevo mes.
+              Ese mismo monto pasa automáticamente como dinero inicial del nuevo mes.
             </p>
 
-            {notificacionMes.mesesPasados > 1 && (
+            {notificacionMes.mesesPasados >
+              1 && (
               <p className="consejo-ayuda">
-                La aplicación detectó que pasaron varios meses y
-                preparó los meses intermedios automáticamente.
+                La aplicación detectó que pasaron varios meses y preparó los meses intermedios automáticamente.
               </p>
             )}
 
@@ -3179,64 +3942,68 @@ function App() {
                 <strong>
                   🏠 Inicio:
                 </strong>{' '}
-                mira cuánto comenzaste,
-                cuánto entró, cuánto gastaste
-                y cuánto te queda.
+                mira cuánto comenzaste, cuánto entró, cuánto gastaste y cuánto te queda.
               </p>
 
               <p>
                 <strong>
                   🧾 Movimientos:
                 </strong>{' '}
-                registra ingresos y gastos,
-                o corrige movimientos anteriores.
+                registra ingresos y gastos, o corrige movimientos anteriores.
               </p>
 
               <p>
                 <strong>
                   🎯 Planificación:
                 </strong>{' '}
-                consulta gráficos, define metas
-                y establece límites de gasto.
+                consulta gráficos, define metas y establece límites de gasto.
+              </p>
+
+              <p>
+                <strong>
+                  📅 Meses:
+                </strong>{' '}
+                usa las flechas o el selector para consultar otros meses.
               </p>
 
               <p>
                 <strong>
                   🔄 Cambio automático:
                 </strong>{' '}
-                cuando comience un nuevo mes,
-                la aplicación trasladará automáticamente
-                el dinero que quedó del mes anterior.
+                cuando comience un nuevo mes, el dinero que quedó pasa automáticamente al nuevo período.
+              </p>
+
+              <p>
+                <strong>
+                  🏁 Dinero inicial:
+                </strong>{' '}
+                si lo modificas, los meses posteriores se recalculan. Por seguridad, la aplicación te pedirá confirmación.
               </p>
 
               <p>
                 <strong>
                   💾 Copia de seguridad:
                 </strong>{' '}
-                entra en Más y descarga regularmente
-                una copia completa de tus datos.
+                entra en Más y descarga regularmente una copia completa de tus datos.
               </p>
 
               <p>
                 <strong>
                   ♻️ Restaurar:
                 </strong>{' '}
-                permite recuperar tus datos usando
-                una copia de seguridad anterior.
+                permite recuperar tus datos usando una copia anterior.
               </p>
 
               <p>
                 <strong>
                   📄 Exportar:
                 </strong>{' '}
-                crea un archivo CSV de tus movimientos
-                para abrirlo en Excel.
+                crea un archivo CSV de tus movimientos para abrirlo en Excel.
               </p>
             </div>
 
             <p className="consejo-ayuda">
-              💡 Guarda una copia de seguridad cada cierto tiempo
-              para proteger mejor tus datos.
+              💡 Tú registras lo que entra y sale. La aplicación hace los cálculos, organiza los meses y protege las acciones importantes con confirmaciones.
             </p>
           </div>
         </div>
