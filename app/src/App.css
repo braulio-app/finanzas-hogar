@@ -25,18 +25,31 @@ select {
   font: inherit;
 }
 
+button {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 input,
 select {
   font-size: 16px;
 }
 
-button {
-  cursor: pointer;
+button,
+input,
+select {
+  outline-offset: 3px;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(40, 116, 91, 0.35);
 }
 
 /* =========================
@@ -131,8 +144,7 @@ button:disabled {
 
 .navegacion-principal {
   display: grid;
-  grid-template-columns:
-    repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   padding: 7px;
   margin-bottom: 20px;
@@ -160,6 +172,10 @@ button:disabled {
 
 .navegacion-principal button:hover {
   background: #edf4f0;
+}
+
+.navegacion-principal button:active {
+  transform: scale(0.98);
 }
 
 .navegacion-principal button.activo {
@@ -211,8 +227,7 @@ button:disabled {
 
 .selector-mes-cabecera {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   align-items: center;
   gap: 18px;
   margin-bottom: 18px;
@@ -225,7 +240,7 @@ button:disabled {
 .navegacion-meses {
   display: grid;
   grid-template-columns:
-    48px minmax(0, 1fr) 48px;
+    50px minmax(0, 1fr) 50px;
   gap: 10px;
   max-width: 560px;
 }
@@ -233,7 +248,7 @@ button:disabled {
 .navegacion-meses select,
 .modal-ayuda select {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
   padding: 12px 14px;
   border: 1px solid #cdded6;
   border-radius: 11px;
@@ -245,7 +260,7 @@ button:disabled {
 .boton-mes {
   display: grid;
   place-items: center;
-  min-height: 46px;
+  min-height: 48px;
   border: 0;
   border-radius: 11px;
   background: #edf3f0;
@@ -256,10 +271,9 @@ button:disabled {
 
 .boton-nuevo-mes,
 .boton-secundario {
-  min-height: 44px;
+  min-height: 46px;
   padding: 10px 16px;
-  border:
-    1px solid #bdd4c9;
+  border: 1px solid #bdd4c9;
   border-radius: 11px;
   background: #eef7f3;
   color: #174c3c;
@@ -282,8 +296,7 @@ button:disabled {
 }
 
 .resumen-cuatro {
-  grid-template-columns:
-    repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .tarjeta {
@@ -350,7 +363,7 @@ button:disabled {
 }
 
 .accion-rapida {
-  min-height: 58px;
+  min-height: 60px;
   padding: 15px 20px;
   border: 0;
   border-radius: 14px;
@@ -365,6 +378,10 @@ button:disabled {
 .accion-rapida:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
+}
+
+.accion-rapida:active {
+  transform: scale(0.98);
 }
 
 .accion-rapida.gasto {
@@ -397,8 +414,7 @@ button:disabled {
 .grafico-circular {
   display: grid;
   place-items: center;
-  width:
-    clamp(190px, 28vw, 270px);
+  width: clamp(190px, 28vw, 270px);
   aspect-ratio: 1;
   border-radius: 50%;
   transition:
@@ -481,7 +497,7 @@ button:disabled {
 }
 
 /* =========================
-   RESUMEN EN TEXTO
+   RESUMEN TEXTO
 ========================= */
 
 .resumen-frases {
@@ -500,8 +516,7 @@ button:disabled {
 
 .formulario-grid {
   display: grid;
-  grid-template-columns:
-    1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 18px;
 }
 
@@ -519,7 +534,7 @@ button:disabled {
 .presupuesto-categoria input,
 .modal-ayuda input {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
   padding: 12px 14px;
   border: 1px solid #cdded6;
   border-radius: 11px;
@@ -541,8 +556,7 @@ button:disabled {
 
 .selector-tipo {
   display: grid;
-  grid-template-columns:
-    1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 6px;
   margin-bottom: 20px;
@@ -551,7 +565,7 @@ button:disabled {
 }
 
 .selector-tipo button {
-  min-height: 47px;
+  min-height: 48px;
   border: 0;
   border-radius: 10px;
   background: transparent;
@@ -566,7 +580,7 @@ button:disabled {
 
 .guardar {
   width: 100%;
-  min-height: 49px;
+  min-height: 50px;
   margin-top: 20px;
   padding: 13px 18px;
   border: 0;
@@ -580,9 +594,13 @@ button:disabled {
   background: #20644e;
 }
 
+.guardar:active {
+  transform: scale(0.99);
+}
+
 .cancelar {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
   margin-top: 10px;
   padding: 12px 18px;
   border: 1px solid #cbd8d2;
@@ -593,7 +611,7 @@ button:disabled {
 }
 
 /* =========================
-   CAMPO DE DINERO
+   CAMPO DINERO
 ========================= */
 
 .campo-presupuesto {
@@ -615,6 +633,7 @@ button:disabled {
 
 .campo-presupuesto input {
   width: 100%;
+  min-height: 48px;
   padding: 14px;
   border: 0;
   outline: none;
@@ -628,8 +647,7 @@ button:disabled {
 
 .panel-cabecera-simple {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   align-items: center;
   gap: 16px;
   margin-bottom: 18px;
@@ -647,8 +665,7 @@ button:disabled {
 
 .movimiento {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   align-items: center;
   gap: 18px;
   padding: 15px;
@@ -688,11 +705,11 @@ button:disabled {
 }
 
 .cantidad.gasto {
-  color: #b84c4c;
+  color: #a13f3f;
 }
 
 .cantidad.ingreso {
-  color: #23825f;
+  color: #1f7455;
 }
 
 .editar,
@@ -700,8 +717,8 @@ button:disabled {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 10px;
 }
@@ -741,8 +758,7 @@ button:disabled {
 
 .progreso-texto {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   gap: 15px;
   margin-bottom: 9px;
 }
@@ -768,12 +784,9 @@ button:disabled {
     width 0.35s ease;
 }
 
-/* Límites */
-
 .presupuestos-categorias {
   display: grid;
-  grid-template-columns:
-    1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
@@ -786,8 +799,7 @@ button:disabled {
 
 .categoria-cabecera {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 11px;
 }
@@ -827,18 +839,16 @@ button:disabled {
 }
 
 .alerta-verde {
-  color: #247b5d;
+  color: #1f7455;
 }
 
 .alerta-amarilla {
-  color: #99701c;
+  color: #8a6418;
 }
 
 .alerta-roja {
-  color: #b24545;
+  color: #a63f3f;
 }
-
-/* Categorías */
 
 .categorias-resumen {
   display: flex;
@@ -849,8 +859,7 @@ button:disabled {
 
 .categoria-texto {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   gap: 14px;
 }
 
@@ -873,7 +882,7 @@ button:disabled {
 }
 
 /* =========================
-   GRÁFICO DE MESES
+   GRÁFICO MESES
 ========================= */
 
 .grafico-meses {
@@ -999,8 +1008,7 @@ button:disabled {
 }
 
 .modal-ayuda h2 {
-  margin:
-    0 42px 18px 0;
+  margin: 0 42px 18px 0;
   color: #174c3c;
 }
 
@@ -1010,8 +1018,8 @@ button:disabled {
   right: 16px;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   background: #edf3f0;
@@ -1021,8 +1029,7 @@ button:disabled {
 
 .nuevo-mes-resumen {
   display: flex;
-  justify-content:
-    space-between;
+  justify-content: space-between;
   align-items: center;
   gap: 18px;
   padding: 18px;
@@ -1052,8 +1059,7 @@ button:disabled {
 .instrucciones p {
   margin: 0;
   padding-bottom: 11px;
-  border-bottom:
-    1px solid #e6ece9;
+  border-bottom: 1px solid #e6ece9;
   line-height: 1.6;
 }
 
@@ -1069,8 +1075,7 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 15px;
-  max-width:
-    calc(100% - 40px);
+  max-width: calc(100% - 40px);
   padding: 14px 16px;
   border-radius: 13px;
   background: #20352d;
@@ -1081,6 +1086,7 @@ button:disabled {
 }
 
 .aviso-deshacer button {
+  min-height: 40px;
   border: 0;
   background: transparent;
   color: #bdebd9;
@@ -1089,8 +1095,7 @@ button:disabled {
 }
 
 .aviso-datos {
-  border-left:
-    5px solid #28745b;
+  border-left: 5px solid #28745b;
 }
 
 .boton-grande {
@@ -1148,8 +1153,7 @@ button:disabled {
   color: white;
 }
 
-.tema-oscuro
-  .tarjeta-destacada {
+.tema-oscuro .tarjeta-destacada {
   background:
     linear-gradient(
       145deg,
@@ -1262,7 +1266,7 @@ button:disabled {
   .sin-movimientos,
 .tema-oscuro
   .sin-datos-grafico {
-  color: #9eadA6;
+  color: #9eada6;
 }
 
 .tema-oscuro
@@ -1307,7 +1311,7 @@ button:disabled {
 }
 
 /* =========================
-   RESPONSIVE TABLET
+   TABLET
 ========================= */
 
 @media (max-width: 900px) {
@@ -1327,18 +1331,32 @@ button:disabled {
 }
 
 /* =========================
-   RESPONSIVE CELULAR
+   CELULAR
 ========================= */
 
 @media (max-width: 700px) {
+  body {
+    font-size: 16px;
+  }
+
   .app {
     width: 94%;
-    padding-top: 18px;
-    padding-bottom: 120px;
+    padding-top: 14px;
+    padding-bottom: 110px;
   }
 
   .encabezado {
-    padding: 24px;
+    padding: 22px;
+    margin-bottom: 16px;
+    border-radius: 20px;
+  }
+
+  .encabezado h1 {
+    font-size: 2rem;
+  }
+
+  .subtitulo {
+    font-size: 0.95rem;
   }
 
   .icono-hogar {
@@ -1347,19 +1365,27 @@ button:disabled {
 
   .navegacion-principal {
     position: sticky;
-    top: 8px;
+    top: 6px;
     z-index: 50;
     grid-template-columns:
-      repeat(
-        4,
-        minmax(0, 1fr)
-      );
+      repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 5px;
+    border-radius: 15px;
   }
 
   .navegacion-principal button {
     min-width: 0;
-    padding: 9px 4px;
-    font-size: 0.77rem;
+    min-height: 52px;
+    padding: 8px 3px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .panel {
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 17px;
   }
 
   .selector-mes-cabecera {
@@ -1367,31 +1393,74 @@ button:disabled {
     flex-direction: column;
   }
 
-  .boton-nuevo-mes {
+  .navegacion-meses {
     width: 100%;
+    grid-template-columns:
+      52px minmax(0, 1fr) 52px;
+  }
+
+  .navegacion-meses select,
+  .boton-mes {
+    min-height: 52px;
   }
 
   .resumen-cuatro {
     grid-template-columns: 1fr;
   }
 
+  .tarjeta {
+    padding: 19px;
+  }
+
   .acciones-rapidas {
     grid-template-columns: 1fr;
+  }
+
+  .accion-rapida {
+    min-height: 58px;
   }
 
   .formulario-grid {
     grid-template-columns: 1fr;
   }
 
+  .formulario-grid input,
+  .formulario-grid select,
+  .presupuesto-categoria input {
+    min-height: 52px;
+  }
+
+  .selector-tipo button {
+    min-height: 52px;
+  }
+
+  .guardar,
+  .cancelar,
+  .boton-secundario,
+  .boton-grande {
+    min-height: 52px;
+  }
+
   .movimiento {
     align-items: flex-start;
     flex-direction: column;
+    padding: 16px;
   }
 
   .movimiento-derecha {
     width: 100%;
-    justify-content:
-      space-between;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .cantidad {
+    flex: 1;
+  }
+
+  .editar,
+  .eliminar {
+    width: 48px;
+    height: 48px;
   }
 
   .categoria-cabecera,
@@ -1415,7 +1484,15 @@ button:disabled {
   }
 
   .grafico-circular {
-    width: min(230px, 75vw);
+    width: min(225px, 72vw);
+  }
+
+  .grafico-circular-centro {
+    width: 66%;
+  }
+
+  .leyenda-item {
+    padding: 12px;
   }
 
   .fila-grafico-mes {
@@ -1425,7 +1502,7 @@ button:disabled {
 
   .barra-mes-fila {
     grid-template-columns:
-      48px minmax(0, 1fr);
+      50px minmax(0, 1fr);
   }
 
   .barra-mes-fila > strong {
@@ -1434,12 +1511,20 @@ button:disabled {
   }
 
   .modal-fondo {
-    padding: 12px;
+    align-items: end;
+    padding: 10px;
   }
 
   .modal-ayuda {
+    width: 100%;
+    max-height: 92vh;
     padding: 24px 18px;
-    max-height: 90vh;
+    border-radius: 20px 20px 12px 12px;
+  }
+
+  .cerrar-ayuda {
+    width: 46px;
+    height: 46px;
   }
 
   .nuevo-mes-resumen {
@@ -1451,8 +1536,56 @@ button:disabled {
     right: 12px;
     bottom: 12px;
     left: 12px;
-    justify-content:
-      space-between;
+    justify-content: space-between;
     max-width: none;
+  }
+}
+
+/* =========================
+   CELULARES PEQUEÑOS
+========================= */
+
+@media (max-width: 420px) {
+  .app {
+    width: 95%;
+  }
+
+  .encabezado {
+    padding: 19px;
+  }
+
+  .encabezado h1 {
+    font-size: 1.75rem;
+  }
+
+  .navegacion-principal button {
+    font-size: 0.69rem;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .tarjeta strong {
+    font-size: 1.55rem;
+  }
+
+  .grafico-circular {
+    width: min(210px, 76vw);
+  }
+}
+
+/* =========================
+   ACCESIBILIDAD
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
